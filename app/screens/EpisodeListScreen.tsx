@@ -21,6 +21,7 @@ import { EpisodeListItem } from "@/components/EpisodeListItem"
 import { SectionHeader } from "@/components/SectionHeader"
 import { SkeletonLoader } from "@/components/SkeletonLoader"
 import { ErrorDisplay } from "@/components/ErrorDisplay"
+import { OfflineBanner } from "@/components/OfflineBanner"
 import { Text } from "@/components/Text"
 import { Screen } from "@/components/Screen"
 
@@ -131,6 +132,9 @@ export const EpisodeListScreen: FC<EpisodeListScreenProps> = ({ navigation }) =>
   // ── Render ────────────────────────────────────────────────────────────────
   return (
     <Screen preset="fixed" safeAreaEdges={["top"]} style={themed($screen)} contentContainerStyle={$flex}>
+      {/* Offline banner — absolutely positioned, slides down when no connection */}
+      <OfflineBanner />
+
       {/* Header — thick bottom border, black on cream */}
       <View style={themed($header)}>
         <Text

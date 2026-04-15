@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react"
-import { View, ViewStyle, TextStyle, Image, ImageStyle } from "react-native"
+import { View, ViewStyle, TextStyle } from "react-native"
+import { Image, ImageStyle } from "expo-image"
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
@@ -66,7 +67,8 @@ export function CharacterCard({ character, index = 0 }: CharacterCardProps) {
             <Image
               source={{ uri: character.image }}
               style={$image}
-              resizeMode="cover"
+              contentFit="cover"
+              cachePolicy="disk"
               accessibilityLabel={character.name}
               onLoadEnd={() => setImageLoading(false)}
             />
