@@ -90,8 +90,11 @@ export const EpisodeDetailScreen: FC<EpisodeDetailScreenProps> = ({ navigation, 
 
   // ── Filtered characters ───────────────────────────────────────────────────
   const filteredCharacters = useMemo(() => {
+    const STATUS_ORDER: Record<CharacterStatus, number> = { Alive: 0, Dead: 1, unknown: 2 }
     if (activeFilters.size === 0) return characters
-    return characters.filter((c) => activeFilters.has(c.status))
+    return characters
+      .filter((c) => activeFilters.has(c.status))
+      .sort((a, b) => (STATUS_ORDER[a.status] ?? 3) - (STATUS_ORDER[b.status] ?? 3))
   }, [characters, activeFilters])
 
   // ── Render helpers ────────────────────────────────────────────────────────
