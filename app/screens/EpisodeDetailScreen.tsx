@@ -8,6 +8,13 @@ import {
   View,
   ViewStyle,
 } from "react-native"
+import Animated, {
+  useAnimatedStyle,
+  useSharedValue,
+  withDelay,
+  withSpring,
+  withTiming,
+} from "react-native-reanimated"
 
 import { useRickMorty } from "@/context/RickMortyContext"
 import type { AppStackScreenProps } from "@/navigators/navigationTypes"
@@ -49,6 +56,14 @@ export const EpisodeDetailScreen: FC<EpisodeDetailScreenProps> = ({ navigation, 
     })
   }, [])
 
+  // ── Chip row entrance animation ───────────────────────────────────────────
+  const chipRowX = useSharedValue(-60)
+  const chipRowOpacity = useSharedValue(0)
+  const chipRowAnimStyle = useAnimatedStyle(() => ({
+    opacity: chipRowOpacity.value,
+    transform: [{ translateX: chipRowX.value }],
+  }))
+
   // ── Derive episode from context ───────────────────────────────────────────
   const episode = useMemo(
     () => episodes.find((ep) => ep.id === episodeId) ?? null,
@@ -61,6 +76,9 @@ export const EpisodeDetailScreen: FC<EpisodeDetailScreenProps> = ({ navigation, 
 
   useEffect(() => {
     setActiveFilters(new Set())
+    // Reset chip animation when episode changes
+    chipRowX.value = -60
+    chipRowOpacity.value = 0
   }, [episodeId])
 
   useEffect(() => {
@@ -81,6 +99,14 @@ export const EpisodeDetailScreen: FC<EpisodeDetailScreenProps> = ({ navigation, 
     [statusCounts],
   )
 
+  // Animate chip row in when chips first become available
+  useEffect(() => {
+    if (availableStatuses.length > 0) {
+      chipRowOpacity.value = withDelay(100, withTiming(1, { duration: 300 }))
+      chipRowX.value = withDelay(100, withSpring(0, { damping: 16, stiffness: 180, mass: 0.8 }))
+    }
+  }, [availableStatuses.length])
+
   // ── Filtered + sorted characters ─────────────────────────────────────────
   const filteredCharacters = useMemo(() => {
     const STATUS_ORDER: Record<CharacterStatus, number> = { Alive: 0, Dead: 1, unknown: 2 }
@@ -92,7 +118,9 @@ export const EpisodeDetailScreen: FC<EpisodeDetailScreenProps> = ({ navigation, 
 
   // ── Render helpers ────────────────────────────────────────────────────────
   const renderCharacter = useCallback(
-    ({ item }: ListRenderItemInfo<RickMortyCharacter>) => <CharacterCard character={item} />,
+    ({ item, index }: ListRenderItemInfo<RickMortyCharacter>) => (
+      <CharacterCard character={item} index={index} />
+    ),
     [],
   )
 
@@ -163,22 +191,24 @@ export const EpisodeDetailScreen: FC<EpisodeDetailScreenProps> = ({ navigation, 
 
         {/* Status filter chips */}
         {!isLoading && !error && availableStatuses.length > 0 && (
-          <ScrollView
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            contentContainerStyle={themed($chipsRow)}
-            style={themed($chipsScroll)}
-          >
-            {availableStatuses.map((status) => (
-              <StatusFilterChip
-                key={status}
-                status={status}
-                count={statusCounts.get(status) ?? 0}
-                isSelected={activeFilters.has(status)}
-                onPress={() => toggleFilter(status)}
-              />
-            ))}
-          </ScrollView>
+          <Animated.View style={chipRowAnimStyle}>
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={themed($chipsRow)}
+              style={themed($chipsScroll)}
+            >
+              {availableStatuses.map((status) => (
+                <StatusFilterChip
+                  key={status}
+                  status={status}
+                  count={statusCounts.get(status) ?? 0}
+                  isSelected={activeFilters.has(status)}
+                  onPress={() => toggleFilter(status)}
+                />
+              ))}
+            </ScrollView>
+          </Animated.View>
         )}
 
         {/* Loading / error states */}

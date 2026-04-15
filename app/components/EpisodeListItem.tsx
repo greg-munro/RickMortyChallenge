@@ -1,4 +1,11 @@
-import { TouchableOpacity, View, ViewStyle, TextStyle } from "react-native"
+import Animated, {
+  useAnimatedStyle,
+  useSharedValue,
+  withSpring,
+  withTiming,
+  runOnJS,
+} from "react-native-reanimated"
+import { View, ViewStyle, TextStyle } from "react-native"
 
 import { useAppTheme } from "@/theme/context"
 import type { ThemedStyle } from "@/theme/types"
@@ -13,16 +20,42 @@ interface EpisodeListItemProps {
 /**
  * Neo-brutalist episode list row.
  * Yellow episode-code badge, bold uppercase name, thick bottom border divider.
- * No card treatment — keeps the dense list feel per design decision.
+ * Reanimated press: scales down to 0.97 with a spring on press, navigates on release.
  */
 export function EpisodeListItem({ episode, onPress }: EpisodeListItemProps) {
   const { themed } = useAppTheme()
 
+  const scale = useSharedValue(1)
+
+  const animStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: scale.value }],
+  }))
+
+  const handlePressIn = () => {
+    scale.value = withSpring(0.97, { damping: 15, stiffness: 400, mass: 0.6 })
+  }
+
+  const handlePressOut = () => {
+    scale.value = withSpring(1.0, { damping: 12, stiffness: 300 })
+  }
+
+  const handlePress = () => {
+    scale.value = withTiming(0.97, { duration: 60 }, () => {
+      scale.value = withSpring(1.0, { damping: 12, stiffness: 300 })
+      runOnJS(onPress)()
+    })
+  }
+
   return (
-    <TouchableOpacity
-      style={themed($container)}
-      onPress={onPress}
-      activeOpacity={0.75}
+    <Animated.View
+      style={[themed($container), animStyle]}
+      onStartShouldSetResponder={() => true}
+      onResponderGrant={handlePressIn}
+      onResponderRelease={() => {
+        handlePressOut()
+        handlePress()
+      }}
+      onResponderTerminate={handlePressOut}
       accessibilityRole="button"
       accessibilityLabel={`${episode.episode} — ${episode.name}`}
     >
@@ -54,9 +87,9 @@ export function EpisodeListItem({ episode, onPress }: EpisodeListItemProps) {
         />
       </View>
 
-      {/* Arrow — bold text chevron instead of icon */}
+      {/* Arrow */}
       <Text text="→" style={themed($arrow)} />
-    </TouchableOpacity>
+    </Animated.View>
   )
 }
 
