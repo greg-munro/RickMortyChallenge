@@ -1,72 +1,177 @@
-import { useEffect, useRef } from "react"
-import { Animated, StyleSheet, TextStyle, View, ViewStyle } from "react-native"
+import { useEffect } from "react"
+import { Dimensions, Image, ImageStyle, StyleSheet, TextStyle, View, ViewStyle } from "react-native"
+import Animated, {
+  runOnJS,
+  useAnimatedStyle,
+  useSharedValue,
+  withDelay,
+  withSequence,
+  withSpring,
+  withTiming,
+  Easing,
+} from "react-native-reanimated"
 
 import { Text } from "@/components/Text"
 import { useAppTheme } from "@/theme/context"
 import type { ThemedStyle } from "@/theme/types"
+
+const { height: SCREEN_HEIGHT } = Dimensions.get("window")
 
 interface SplashScreenProps {
   onFinish: () => void
 }
 
 /**
- * Neo-brutalist splash screen.
+ * Neo-brutalist splash screen — fully Reanimated 3.
  *
- * Cream canvas background. "RICK & MORTY" in max-weight black uppercase at 48px,
- * tight letter-spacing. "CATALOG" in hot-red — same weight, acts as a color punch.
- * Tagline in small uppercase tracked out wide.
+ * Entrance sequence (staggered):
+ *  0ms   — stripes expand width from centre
+ *  200ms — headline box slams down with spring + thud scale
+ *  500ms — GIF scales up + fades in
+ *  700ms — tagline slides up + fades in
  *
- * Holds for 2s then fades + slides up and unmounts.
+ * Exit (after 2800ms hold):
+ *  Entire screen slams down off screen.
  */
 export function SplashScreen({ onFinish }: SplashScreenProps) {
   const { themed } = useAppTheme()
-  const opacity = useRef(new Animated.Value(1)).current
-  const translateY = useRef(new Animated.Value(0)).current
+
+  // ── Stripe widths (0 → "100%") ─────────────────────────────────────────
+  const stripeWidth = useSharedValue(0)
+
+  // ── Headline box ────────────────────────────────────────────────────────
+  const headlineY = useSharedValue(-100)
+  const headlineOpacity = useSharedValue(0)
+  const headlineScale = useSharedValue(1)
+
+  // ── GIF ─────────────────────────────────────────────────────────────────
+  const gifScale = useSharedValue(0.6)
+  const gifOpacity = useSharedValue(0)
+
+  // ── Tagline ─────────────────────────────────────────────────────────────
+  const taglineY = useSharedValue(24)
+  const taglineOpacity = useSharedValue(0)
+
+  // ── Exit ─────────────────────────────────────────────────────────────────
+  const exitY = useSharedValue(0)
+  const exitOpacity = useSharedValue(1)
 
   useEffect(() => {
-    const timeout = setTimeout(() => {
-      Animated.parallel([
-        Animated.timing(opacity, {
-          toValue: 0,
-          duration: 350,
-          useNativeDriver: true,
-        }),
-        Animated.timing(translateY, {
-          toValue: -32,
-          duration: 350,
-          useNativeDriver: true,
-        }),
-      ]).start(() => onFinish())
-    }, 2000)
+    // 1. Stripes expand
+    stripeWidth.value = withTiming(100, { duration: 400, easing: Easing.out(Easing.cubic) })
 
-    return () => clearTimeout(timeout)
+    // 2. Headline slams down
+    headlineOpacity.value = withDelay(200, withTiming(1, { duration: 100 }))
+    headlineY.value = withDelay(
+      200,
+      withSpring(0, { damping: 12, stiffness: 200, mass: 0.8 }),
+    )
+    // Thud scale pulse on landing
+    headlineScale.value = withDelay(
+      380,
+      withSequence(
+        withTiming(1.05, { duration: 80, easing: Easing.out(Easing.cubic) }),
+        withSpring(1.0, { damping: 8, stiffness: 300 }),
+      ),
+    )
+
+    // 3. GIF scales up + fades in
+    gifOpacity.value = withDelay(500, withTiming(1, { duration: 300 }))
+    gifScale.value = withDelay(
+      500,
+      withSpring(1.0, { damping: 14, stiffness: 160, mass: 0.9 }),
+    )
+
+    // 4. Tagline slides up + fades in
+    taglineOpacity.value = withDelay(700, withTiming(1, { duration: 350 }))
+    taglineY.value = withDelay(
+      700,
+      withTiming(0, { duration: 350, easing: Easing.out(Easing.cubic) }),
+    )
+
+    // 5. Exit — slam down
+    const exitDelay = setTimeout(() => {
+      exitOpacity.value = withTiming(0, { duration: 300 })
+      exitY.value = withTiming(
+        SCREEN_HEIGHT,
+        { duration: 420, easing: Easing.in(Easing.cubic) },
+        (finished) => {
+          if (finished) runOnJS(onFinish)()
+        },
+      )
+    }, 2800)
+
+    return () => clearTimeout(exitDelay)
   }, [])
 
+  // ── Animated styles ───────────────────────────────────────────────────────
+
+  const $stripeAnimStyle = useAnimatedStyle(() => ({
+    width: `${stripeWidth.value}%`,
+  }))
+
+  const $headlineAnimStyle = useAnimatedStyle(() => ({
+    opacity: headlineOpacity.value,
+    transform: [
+      { translateY: headlineY.value },
+      { scale: headlineScale.value },
+    ],
+  }))
+
+  const $gifAnimStyle = useAnimatedStyle(() => ({
+    opacity: gifOpacity.value,
+    transform: [{ scale: gifScale.value }],
+  }))
+
+  const $taglineAnimStyle = useAnimatedStyle(() => ({
+    opacity: taglineOpacity.value,
+    transform: [{ translateY: taglineY.value }],
+  }))
+
+  const $exitAnimStyle = useAnimatedStyle(() => ({
+    opacity: exitOpacity.value,
+    transform: [{ translateY: exitY.value }],
+  }))
+
   return (
-    <Animated.View style={[themed($container), { opacity, transform: [{ translateY }] }]}>
-      {/* Decorative top border stripe */}
-      <View style={themed($topStripe)} />
-
-      <View style={themed($content)}>
-        {/* Main headline block with black border */}
-        <View style={themed($headlineBox)}>
-          <Text text="RICK &" weight="bold" style={themed($headline)} />
-          <Text text="MORTY" weight="bold" style={themed($headline)} />
-          {/* "CATALOG" in accent red — punches through */}
-          <Text text="CATALOG" weight="bold" style={themed($headlineAccent)} />
-        </View>
-
-        {/* Tagline */}
-        <Text
-          text="ALL EPISODES. ALL SEASONS."
-          size="xs"
-          weight="bold"
-          style={themed($tagline)}
-        />
+    <Animated.View style={[themed($container), $exitAnimStyle]}>
+      {/* Top stripe — expands from left */}
+      <View style={themed($topStripeOuter)}>
+        <Animated.View style={[themed($topStripeInner), $stripeAnimStyle]} />
       </View>
 
-      {/* Decorative bottom border stripe */}
-      <View style={themed($bottomStripe)} />
+      <View style={themed($content)}>
+        {/* Headline box — slams down */}
+        <Animated.View style={[$headlineAnimStyle, themed($headlineBox)]}>
+          <Text text="RICK &" weight="bold" style={themed($headline)} />
+          <Text text="MORTY" weight="bold" style={themed($headline)} />
+          <Text text="CATALOG" weight="bold" style={themed($headlineAccent)} />
+        </Animated.View>
+
+        {/* GIF — scales up */}
+        <Animated.View style={$gifAnimStyle}>
+          <Image
+            source={require("../../assets/images/splash.gif")}
+            style={$gif}
+            resizeMode="contain"
+          />
+        </Animated.View>
+
+        {/* Tagline — slides up */}
+        <Animated.View style={$taglineAnimStyle}>
+          <Text
+            text="ALL EPISODES. ALL SEASONS."
+            size="xs"
+            weight="bold"
+            style={themed($tagline)}
+          />
+        </Animated.View>
+      </View>
+
+      {/* Bottom stripe — expands from left */}
+      <View style={themed($bottomStripeOuter)}>
+        <Animated.View style={[themed($bottomStripeInner), $stripeAnimStyle]} />
+      </View>
     </Animated.View>
   )
 }
@@ -79,23 +184,33 @@ const $container: ThemedStyle<ViewStyle> = ({ colors }) => ({
   zIndex: 999,
 })
 
-const $topStripe: ThemedStyle<ViewStyle> = ({ colors }) => ({
+const $topStripeOuter: ThemedStyle<ViewStyle> = () => ({
   position: "absolute",
   top: 0,
   left: 0,
   right: 0,
   height: 8,
+  overflow: "hidden",
+})
+
+const $topStripeInner: ThemedStyle<ViewStyle> = ({ colors }) => ({
+  height: "100%",
   backgroundColor: colors.palette.accent,
   borderBottomWidth: 3,
   borderBottomColor: colors.border,
 })
 
-const $bottomStripe: ThemedStyle<ViewStyle> = ({ colors }) => ({
+const $bottomStripeOuter: ThemedStyle<ViewStyle> = () => ({
   position: "absolute",
   bottom: 0,
   left: 0,
   right: 0,
   height: 8,
+  overflow: "hidden",
+})
+
+const $bottomStripeInner: ThemedStyle<ViewStyle> = ({ colors }) => ({
+  height: "100%",
   backgroundColor: colors.palette.secondary,
   borderTopWidth: 3,
   borderTopColor: colors.border,
@@ -142,3 +257,8 @@ const $tagline: ThemedStyle<TextStyle> = ({ colors }) => ({
   letterSpacing: 4,
   textTransform: "uppercase",
 })
+
+const $gif: ImageStyle = {
+  width: 260,
+  height: 260,
+}
