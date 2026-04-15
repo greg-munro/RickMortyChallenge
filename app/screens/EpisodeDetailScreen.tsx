@@ -19,14 +19,9 @@ import { SkeletonLoader } from "@/components/SkeletonLoader"
 import { ErrorDisplay } from "@/components/ErrorDisplay"
 import { StatusFilterChip } from "@/components/StatusFilterChip"
 import { Text } from "@/components/Text"
-import { Icon } from "@/components/Icon"
 import { Screen } from "@/components/Screen"
 
-// ─── Types ───────────────────────────────────────────────────────────────────
-
 interface EpisodeDetailScreenProps extends AppStackScreenProps<"EpisodeDetail"> {}
-
-// ─── Screen ──────────────────────────────────────────────────────────────────
 
 export const EpisodeDetailScreen: FC<EpisodeDetailScreenProps> = ({ navigation, route }) => {
   const { episodeId } = route.params
@@ -54,7 +49,7 @@ export const EpisodeDetailScreen: FC<EpisodeDetailScreenProps> = ({ navigation, 
     })
   }, [])
 
-  // ── Derive episode from context (already loaded) ──────────────────────────
+  // ── Derive episode from context ───────────────────────────────────────────
   const episode = useMemo(
     () => episodes.find((ep) => ep.id === episodeId) ?? null,
     [episodes, episodeId],
@@ -64,17 +59,15 @@ export const EpisodeDetailScreen: FC<EpisodeDetailScreenProps> = ({ navigation, 
   const isLoading = episode ? (charactersLoading[episode.id] ?? false) : false
   const error = episode ? (charactersError[episode.id] ?? null) : null
 
-  // ── Reset filters when episode changes ────────────────────────────────────
   useEffect(() => {
     setActiveFilters(new Set())
   }, [episodeId])
 
-  // ── Fetch characters on mount ─────────────────────────────────────────────
   useEffect(() => {
     if (episode) fetchCharactersForEpisode(episode)
   }, [episode, fetchCharactersForEpisode])
 
-  // ── Available statuses (only those present in this episode) ──────────────
+  // ── Status counts & available filters ────────────────────────────────────
   const statusCounts = useMemo(() => {
     const counts = new Map<CharacterStatus, number>()
     for (const c of characters) {
@@ -88,7 +81,7 @@ export const EpisodeDetailScreen: FC<EpisodeDetailScreenProps> = ({ navigation, 
     [statusCounts],
   )
 
-  // ── Filtered characters ───────────────────────────────────────────────────
+  // ── Filtered + sorted characters ─────────────────────────────────────────
   const filteredCharacters = useMemo(() => {
     const STATUS_ORDER: Record<CharacterStatus, number> = { Alive: 0, Dead: 1, unknown: 2 }
     if (activeFilters.size === 0) return characters
@@ -105,69 +98,70 @@ export const EpisodeDetailScreen: FC<EpisodeDetailScreenProps> = ({ navigation, 
 
   const keyExtractor = useCallback((item: RickMortyCharacter) => String(item.id), [])
 
-  // ── Character skeleton ─────────────────────────────────────────────────
+  // ── Character skeleton ────────────────────────────────────────────────────
   const renderCharacterSkeletons = () => (
     <View style={themed($skeletonGrid)}>
       {Array.from({ length: 6 }).map((_, i) => (
         <View key={i} style={themed($skeletonCard)}>
           <SkeletonLoader width="100%" height={150} borderRadius={0} />
           <View style={themed($skeletonCardInfo)}>
-            <SkeletonLoader width="80%" height={14} />
-            <SkeletonLoader width="50%" height={20} borderRadius={12} style={themed($skeletonBadge)} />
+            <SkeletonLoader width="80%" height={14} borderRadius={0} />
+            <SkeletonLoader width="50%" height={20} borderRadius={0} style={themed($skeletonBadge)} />
           </View>
         </View>
       ))}
     </View>
   )
 
-  // ── Episode info header component ──────────────────────────────────────
+  // ── Episode info header ───────────────────────────────────────────────────
   const ListHeader = useMemo(() => {
     if (!episode) return null
     return (
       <View style={themed($listHeaderContainer)}>
-        {/* Episode code + name */}
+        {/* Episode code badge — yellow, sharp, bordered */}
         <View style={themed($episodeCodeBadge)}>
-          <Text text={episode.episode} size="sm" weight="bold" style={themed($episodeCodeText)} />
+          <Text
+            text={episode.episode}
+            size="sm"
+            weight="bold"
+            style={themed($episodeCodeText)}
+          />
         </View>
+
+        {/* Episode title */}
         <Text
-          text={episode.name}
-          preset="heading"
+          text={episode.name.toUpperCase()}
+          weight="bold"
           style={themed($episodeTitle)}
           numberOfLines={3}
         />
 
-        {/* Air date row */}
+        {/* Meta rows */}
         <View style={themed($metaRow)}>
-          <Icon icon="bell" size={14} color={theme.colors.textDim} />
+          <Text text="◉" style={themed($metaIcon)} />
+          <Text text={episode.air_date} size="sm" weight="bold" style={themed($metaText)} />
+        </View>
+
+        <View style={themed($metaRow)}>
+          <Text text="◈" style={themed($metaIcon)} />
           <Text
-            text={episode.air_date}
+            text={`${episode.characters.length} CHARACTER${episode.characters.length !== 1 ? "S" : ""}`}
             size="sm"
-            weight="normal"
+            weight="bold"
             style={themed($metaText)}
           />
         </View>
 
-        {/* Character count */}
-        <View style={themed($metaRow)}>
-          <Icon icon="community" size={14} color={theme.colors.textDim} />
-          <Text
-            text={`${episode.characters.length} character${episode.characters.length !== 1 ? "s" : ""}`}
-            size="sm"
-            weight="normal"
-            style={themed($metaText)}
-          />
-        </View>
-
-        {/* Section divider */}
+        {/* Section divider — thick black border */}
         <View style={themed($divider)} />
 
         <Text
           tx="episodeDetailScreen:characters"
-          preset="subheading"
+          weight="bold"
           style={themed($sectionTitle)}
         />
 
-        {/* Status filter chips — only shown once characters are loaded */}
+        {/* Status filter chips */}
         {!isLoading && !error && availableStatuses.length > 0 && (
           <ScrollView
             horizontal
@@ -187,7 +181,7 @@ export const EpisodeDetailScreen: FC<EpisodeDetailScreenProps> = ({ navigation, 
           </ScrollView>
         )}
 
-        {/* Loading / error state for characters */}
+        {/* Loading / error states */}
         {isLoading && renderCharacterSkeletons()}
         {!isLoading && error && (
           <ErrorDisplay
@@ -216,7 +210,11 @@ export const EpisodeDetailScreen: FC<EpisodeDetailScreenProps> = ({ navigation, 
     return (
       <Screen preset="fixed" safeAreaEdges={["top", "bottom"]} style={themed($screen)}>
         <View style={themed($notFound)}>
-          <Text text="Episode not found." preset="subheading" style={themed($notFoundText)} />
+          <Text
+            text="EPISODE NOT FOUND."
+            weight="bold"
+            style={themed($notFoundText)}
+          />
         </View>
       </Screen>
     )
@@ -225,7 +223,7 @@ export const EpisodeDetailScreen: FC<EpisodeDetailScreenProps> = ({ navigation, 
   // ── Main render ──────────────────────────────────────────────────────────
   return (
     <Screen preset="fixed" safeAreaEdges={["top"]} style={themed($screen)}>
-      {/* Back button */}
+      {/* Back button — bordered, bold, neo-styled */}
       <TouchableOpacity
         style={themed($backButton)}
         onPress={() => navigation.goBack()}
@@ -233,11 +231,11 @@ export const EpisodeDetailScreen: FC<EpisodeDetailScreenProps> = ({ navigation, 
         accessibilityRole="button"
         accessibilityLabel="Go back"
       >
-        <Icon icon="caretLeft" size={20} color={theme.colors.tint} />
-        <Text text="Episodes" size="sm" weight="medium" style={themed($backText)} />
+        <Text text="←" style={themed($backArrow)} />
+        <Text text="EPISODES" size="sm" weight="bold" style={themed($backText)} />
       </TouchableOpacity>
 
-      {/* Character grid with episode info in the header */}
+      {/* Character grid */}
       {!isLoading && !error ? (
         <FlatList<RickMortyCharacter>
           data={filteredCharacters}
@@ -273,16 +271,27 @@ const $screen: ThemedStyle<ViewStyle> = ({ colors }) => ({
   backgroundColor: colors.background,
 })
 
-const $backButton: ThemedStyle<ViewStyle> = ({ spacing }) => ({
+const $backButton: ThemedStyle<ViewStyle> = ({ colors, spacing }) => ({
   flexDirection: "row",
   alignItems: "center",
   paddingHorizontal: spacing.md,
   paddingVertical: spacing.sm,
-  gap: spacing.xxxs,
+  borderBottomWidth: 3,
+  borderBottomColor: colors.border,
+  backgroundColor: colors.palette.white,
+  gap: spacing.xs,
+})
+
+const $backArrow: ThemedStyle<TextStyle> = ({ colors }) => ({
+  color: colors.text,
+  fontSize: 18,
+  fontWeight: "700",
 })
 
 const $backText: ThemedStyle<TextStyle> = ({ colors }) => ({
-  color: colors.tint,
+  color: colors.text,
+  letterSpacing: 2,
+  textTransform: "uppercase",
 })
 
 const $listContent: ThemedStyle<ViewStyle> = ({ spacing }) => ({
@@ -295,25 +304,32 @@ const $columnWrapper: ThemedStyle<ViewStyle> = ({ spacing }) => ({
 
 const $listHeaderContainer: ThemedStyle<ViewStyle> = ({ spacing }) => ({
   paddingHorizontal: spacing.md,
-  paddingTop: spacing.xs,
+  paddingTop: spacing.md,
   paddingBottom: spacing.md,
 })
 
 const $episodeCodeBadge: ThemedStyle<ViewStyle> = ({ colors, spacing }) => ({
   alignSelf: "flex-start",
-  backgroundColor: colors.palette.primary100,
-  borderRadius: 6,
+  backgroundColor: colors.palette.secondary,
+  borderWidth: 2,
+  borderColor: colors.border,
   paddingHorizontal: spacing.sm,
   paddingVertical: spacing.xxxs,
   marginBottom: spacing.xs,
 })
 
 const $episodeCodeText: ThemedStyle<TextStyle> = ({ colors }) => ({
-  color: colors.palette.primary600,
+  color: colors.text,
+  letterSpacing: 1,
 })
 
-const $episodeTitle: ThemedStyle<TextStyle> = ({ colors, spacing }) => ({
+const $episodeTitle: ThemedStyle<TextStyle> = ({ colors, typography, spacing }) => ({
   color: colors.text,
+  fontFamily: typography.primary.black,
+  fontSize: 28,
+  lineHeight: 32,
+  letterSpacing: -0.5,
+  textTransform: "uppercase",
   marginBottom: spacing.sm,
 })
 
@@ -324,18 +340,28 @@ const $metaRow: ThemedStyle<ViewStyle> = ({ spacing }) => ({
   marginBottom: spacing.xs,
 })
 
+const $metaIcon: ThemedStyle<TextStyle> = ({ colors }) => ({
+  color: colors.palette.accent,
+  fontSize: 14,
+})
+
 const $metaText: ThemedStyle<TextStyle> = ({ colors }) => ({
-  color: colors.textDim,
+  color: colors.text,
+  letterSpacing: 0.5,
 })
 
 const $divider: ThemedStyle<ViewStyle> = ({ colors, spacing }) => ({
-  height: 1,
-  backgroundColor: colors.separator,
+  height: 3,
+  backgroundColor: colors.border,
   marginVertical: spacing.md,
 })
 
-const $sectionTitle: ThemedStyle<TextStyle> = ({ colors, spacing }) => ({
+const $sectionTitle: ThemedStyle<TextStyle> = ({ colors, typography, spacing }) => ({
   color: colors.text,
+  fontFamily: typography.primary.black,
+  fontSize: 18,
+  letterSpacing: 2,
+  textTransform: "uppercase",
   marginBottom: spacing.sm,
 })
 
@@ -359,8 +385,9 @@ const $skeletonGrid: ThemedStyle<ViewStyle> = () => ({
 const $skeletonCard: ThemedStyle<ViewStyle> = ({ colors, spacing }) => ({
   width: "50%",
   padding: spacing.xs / 2,
-  borderRadius: 12,
-  backgroundColor: colors.palette.neutral100,
+  backgroundColor: colors.palette.white,
+  borderWidth: 2,
+  borderColor: colors.border,
   overflow: "hidden",
 })
 
@@ -373,13 +400,19 @@ const $skeletonBadge: ThemedStyle<ViewStyle> = ({ spacing }) => ({
   marginTop: spacing.xxxs,
 })
 
-const $notFound: ThemedStyle<ViewStyle> = ({ spacing }) => ({
+const $notFound: ThemedStyle<ViewStyle> = ({ colors, spacing }) => ({
   flex: 1,
   justifyContent: "center",
   alignItems: "center",
   padding: spacing.xl,
+  borderWidth: 3,
+  borderColor: colors.border,
+  margin: spacing.md,
+  backgroundColor: colors.palette.white,
 })
 
 const $notFoundText: ThemedStyle<TextStyle> = ({ colors }) => ({
-  color: colors.textDim,
+  color: colors.text,
+  letterSpacing: 2,
+  textAlign: "center",
 })

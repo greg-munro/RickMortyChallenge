@@ -21,14 +21,9 @@ import { SectionHeader } from "@/components/SectionHeader"
 import { SkeletonLoader } from "@/components/SkeletonLoader"
 import { ErrorDisplay } from "@/components/ErrorDisplay"
 import { Text } from "@/components/Text"
-import { Icon } from "@/components/Icon"
 import { Screen } from "@/components/Screen"
 
-// ─── Types ───────────────────────────────────────────────────────────────────
-
 interface EpisodeListScreenProps extends AppStackScreenProps<"EpisodeList"> {}
-
-// ─── Screen ──────────────────────────────────────────────────────────────────
 
 export const EpisodeListScreen: FC<EpisodeListScreenProps> = ({ navigation }) => {
   const { episodes, episodesLoading, episodesError, fetchEpisodes } = useRickMorty()
@@ -98,10 +93,10 @@ export const EpisodeListScreen: FC<EpisodeListScreenProps> = ({ navigation }) =>
     <View style={themed($skeletonContainer)}>
       {Array.from({ length: 10 }).map((_, i) => (
         <View key={i} style={themed($skeletonRow)}>
-          <SkeletonLoader width={56} height={28} borderRadius={6} />
+          <SkeletonLoader width={56} height={28} borderRadius={0} />
           <View style={$skeletonTextBlock}>
-            <SkeletonLoader width="70%" height={16} />
-            <SkeletonLoader width="45%" height={12} style={themed($skeletonSecondLine)} />
+            <SkeletonLoader width="70%" height={14} borderRadius={0} />
+            <SkeletonLoader width="45%" height={11} borderRadius={0} style={themed($skeletonSecondLine)} />
           </View>
         </View>
       ))}
@@ -123,8 +118,9 @@ export const EpisodeListScreen: FC<EpisodeListScreenProps> = ({ navigation }) =>
     return (
       <View style={themed($emptySearch)}>
         <Text
-          text={`No episodes match "${searchQuery}"`}
+          text={`NO RESULTS FOR "${searchQuery.toUpperCase()}"`}
           size="sm"
+          weight="bold"
           style={themed($emptySearchText)}
         />
       </View>
@@ -134,30 +130,38 @@ export const EpisodeListScreen: FC<EpisodeListScreenProps> = ({ navigation }) =>
   // ── Render ────────────────────────────────────────────────────────────────
   return (
     <Screen preset="fixed" safeAreaEdges={["top"]} style={themed($screen)}>
-      {/* Header */}
+      {/* Header — thick bottom border, black on cream */}
       <View style={themed($header)}>
-        <Text preset="heading" tx="episodeListScreen:title" style={themed($headerTitle)} />
+        <Text
+          preset="heading"
+          tx="episodeListScreen:title"
+          style={themed($headerTitle)}
+        />
+        {/* Red accent underline beneath title */}
+        <View style={themed($headerUnderline)} />
       </View>
 
-      {/* Search bar */}
-      <View style={themed($searchBar)}>
-        <Icon icon="view" size={18} color={theme.colors.textDim} />
-        <TextInput
-          style={themed($searchInput)}
-          placeholder="Search episodes..."
-          placeholderTextColor={theme.colors.textDim}
-          value={searchQuery}
-          onChangeText={handleSearchChange}
-          returnKeyType="search"
-          clearButtonMode="never"
-          autoCorrect={false}
-          autoCapitalize="none"
-        />
-        {searchQuery.length > 0 && (
-          <TouchableOpacity onPress={handleClearSearch} hitSlop={8}>
-            <Icon icon="x" size={16} color={theme.colors.textDim} />
-          </TouchableOpacity>
-        )}
+      {/* Search bar — sharp corners, thick border, bold text */}
+      <View style={themed($searchBarOuter)}>
+        <View style={themed($searchBar)}>
+          <Text text="/" style={themed($searchIcon)} />
+          <TextInput
+            style={themed($searchInput)}
+            placeholder="SEARCH EPISODES..."
+            placeholderTextColor={theme.colors.text + "55"}
+            value={searchQuery}
+            onChangeText={handleSearchChange}
+            returnKeyType="search"
+            clearButtonMode="never"
+            autoCorrect={false}
+            autoCapitalize="characters"
+          />
+          {searchQuery.length > 0 && (
+            <TouchableOpacity onPress={handleClearSearch} hitSlop={8}>
+              <Text text="×" style={themed($clearButton)} />
+            </TouchableOpacity>
+          )}
+        </View>
       </View>
 
       {/* Content */}
@@ -190,54 +194,87 @@ const $screen: ThemedStyle<ViewStyle> = ({ colors }) => ({
   backgroundColor: colors.background,
 })
 
-const $header: ThemedStyle<ViewStyle> = ({ spacing }) => ({
+const $header: ThemedStyle<ViewStyle> = ({ colors, spacing }) => ({
   paddingHorizontal: spacing.md,
   paddingTop: spacing.sm,
   paddingBottom: spacing.xs,
+  borderBottomWidth: 3,
+  borderBottomColor: colors.border,
+  backgroundColor: colors.background,
 })
 
-const $headerTitle: ThemedStyle<TextStyle> = ({ colors }) => ({
+const $headerTitle: ThemedStyle<TextStyle> = ({ colors, typography }) => ({
   color: colors.text,
+  fontFamily: typography.primary.black,
+  fontSize: 32,
+  letterSpacing: -0.5,
+  textTransform: "uppercase",
+})
+
+const $headerUnderline: ThemedStyle<ViewStyle> = ({ colors }) => ({
+  height: 4,
+  width: 48,
+  backgroundColor: colors.palette.accent,
+  marginTop: 4,
+})
+
+const $searchBarOuter: ThemedStyle<ViewStyle> = ({ spacing }) => ({
+  paddingHorizontal: spacing.md,
+  paddingVertical: spacing.xs,
 })
 
 const $searchBar: ThemedStyle<ViewStyle> = ({ colors, spacing }) => ({
   flexDirection: "row",
   alignItems: "center",
-  backgroundColor: colors.palette.neutral100,
-  marginHorizontal: spacing.md,
-  marginBottom: spacing.xs,
-  borderRadius: 10,
-  borderWidth: 1,
+  backgroundColor: colors.palette.white,
+  borderWidth: 3,
   borderColor: colors.border,
   paddingHorizontal: spacing.sm,
   paddingVertical: spacing.xs,
   gap: spacing.xs,
 })
 
+const $searchIcon: ThemedStyle<TextStyle> = ({ colors }) => ({
+  color: colors.text,
+  fontSize: 18,
+  fontWeight: "700",
+  opacity: 0.4,
+})
+
 const $searchInput: ThemedStyle<TextStyle> = ({ colors, typography }) => ({
   flex: 1,
-  fontSize: 15,
-  fontFamily: typography.primary.normal,
+  fontSize: 14,
+  fontFamily: typography.primary.bold,
   color: colors.text,
+  letterSpacing: 1,
   padding: 0,
   margin: 0,
+})
+
+const $clearButton: ThemedStyle<TextStyle> = ({ colors }) => ({
+  color: colors.text,
+  fontSize: 22,
+  fontWeight: "700",
+  lineHeight: 24,
 })
 
 const $listContent: ThemedStyle<ViewStyle> = ({ spacing }) => ({
   paddingBottom: spacing.xl,
 })
 
-const $skeletonContainer: ThemedStyle<ViewStyle> = ({ spacing }) => ({
-  paddingTop: spacing.xs,
+const $skeletonContainer: ThemedStyle<ViewStyle> = ({ colors }) => ({
+  borderTopWidth: 3,
+  borderTopColor: colors.border,
 })
 
 const $skeletonRow: ThemedStyle<ViewStyle> = ({ colors, spacing }) => ({
   flexDirection: "row",
   alignItems: "center",
+  backgroundColor: colors.palette.white,
   paddingHorizontal: spacing.md,
   paddingVertical: spacing.sm,
-  borderBottomWidth: 1,
-  borderBottomColor: colors.separator,
+  borderBottomWidth: 3,
+  borderBottomColor: colors.border,
   gap: spacing.sm,
 })
 
@@ -250,12 +287,17 @@ const $skeletonSecondLine: ThemedStyle<ViewStyle> = ({ spacing }) => ({
   marginTop: spacing.xxxs,
 })
 
-const $emptySearch: ThemedStyle<ViewStyle> = ({ spacing }) => ({
-  padding: spacing.xl,
+const $emptySearch: ThemedStyle<ViewStyle> = ({ colors, spacing }) => ({
+  margin: spacing.md,
+  padding: spacing.lg,
+  borderWidth: 3,
+  borderColor: colors.border,
+  backgroundColor: colors.palette.white,
   alignItems: "center",
 })
 
 const $emptySearchText: ThemedStyle<TextStyle> = ({ colors }) => ({
-  color: colors.textDim,
+  color: colors.text,
+  letterSpacing: 1,
   textAlign: "center",
 })

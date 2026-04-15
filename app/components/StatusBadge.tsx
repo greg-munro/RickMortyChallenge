@@ -11,39 +11,31 @@ interface StatusBadgeProps {
 }
 
 /**
- * A small pill showing a colored dot and a status label.
- * Used on character cards to indicate Alive / Dead / Unknown.
+ * Neo-brutalist status badge.
+ * Solid vivid background matching the status color, sharp corners, black border.
+ * No dot — the color block IS the indicator.
  */
 export function StatusBadge({ status }: StatusBadgeProps) {
   const { themed } = useAppTheme()
-  const dotColor = STATUS_COLORS[status] ?? STATUS_COLORS.unknown
+  const bgColor = STATUS_COLORS[status] ?? STATUS_COLORS.unknown
   const label = STATUS_LABELS[status] ?? "Unknown"
 
   return (
-    <View style={themed($container)}>
-      <View style={[$dot, { backgroundColor: dotColor }]} />
-      <Text text={label} size="xs" weight="medium" style={themed($label)} />
+    <View style={[themed($container), { backgroundColor: bgColor }]}>
+      <Text text={label.toUpperCase()} size="xs" weight="bold" style={themed($label)} />
     </View>
   )
 }
 
 const $container: ThemedStyle<ViewStyle> = ({ colors, spacing }) => ({
-  flexDirection: "row",
-  alignItems: "center",
-  backgroundColor: colors.palette.neutral200,
-  borderRadius: 12,
+  borderWidth: 2,
+  borderColor: colors.border,
   paddingHorizontal: spacing.xs,
-  paddingVertical: spacing.xxxs,
+  paddingVertical: 2,
   alignSelf: "flex-start",
 })
 
-const $dot: ViewStyle = {
-  width: 7,
-  height: 7,
-  borderRadius: 4,
-  marginRight: 4,
-}
-
 const $label: ThemedStyle<TextStyle> = ({ colors }) => ({
-  color: colors.textDim,
+  color: colors.text,
+  letterSpacing: 0.5,
 })

@@ -3,62 +3,62 @@ import { View, ViewStyle, TextStyle, Image, ImageStyle } from "react-native"
 import { useAppTheme } from "@/theme/context"
 import type { ThemedStyle } from "@/theme/types"
 import type { RickMortyCharacter } from "@/services/api/types"
-import { Text } from "./Text"
+import { HardShadowView } from "./HardShadowView"
 import { StatusBadge } from "./StatusBadge"
+import { Text } from "./Text"
 
 interface CharacterCardProps {
   character: RickMortyCharacter
 }
 
 /**
- * Grid card displaying a character's image, name and status.
- * Designed for a 2-column FlatList layout.
+ * Neo-brutalist character card.
+ * White card with thick black border + hard offset shadow (HardShadowView).
+ * Sharp corners, uppercase bold name, vivid status badge.
  */
 export function CharacterCard({ character }: CharacterCardProps) {
   const { themed } = useAppTheme()
 
   return (
-    <View style={themed($card)}>
-      <Image
-        source={{ uri: character.image }}
-        style={themed($image)}
-        resizeMode="cover"
-        accessibilityLabel={character.name}
-      />
-      <View style={themed($info)}>
-        <Text
-          text={character.name}
-          size="sm"
-          weight="semiBold"
-          numberOfLines={1}
-          style={themed($name)}
+    <HardShadowView size="sm" style={themed($wrapper)}>
+      <View style={themed($card)}>
+        <Image
+          source={{ uri: character.image }}
+          style={$image}
+          resizeMode="cover"
+          accessibilityLabel={character.name}
         />
-        <StatusBadge status={character.status} />
+        <View style={themed($info)}>
+          <Text
+            text={character.name.toUpperCase()}
+            size="xs"
+            weight="bold"
+            numberOfLines={1}
+            style={themed($name)}
+          />
+          <StatusBadge status={character.status} />
+        </View>
       </View>
-    </View>
+    </HardShadowView>
   )
 }
 
-const $card: ThemedStyle<ViewStyle> = ({ colors, spacing }) => ({
+const $wrapper: ThemedStyle<ViewStyle> = ({ spacing }) => ({
   flex: 1,
   margin: spacing.xs / 2,
-  borderRadius: 12,
-  backgroundColor: colors.palette.neutral100,
-  overflow: "hidden",
-  borderWidth: 1,
-  borderColor: colors.palette.neutral300,
-  // Shadow
-  shadowColor: colors.palette.neutral800,
-  shadowOffset: { width: 0, height: 2 },
-  shadowOpacity: 0.07,
-  shadowRadius: 4,
-  elevation: 3,
 })
 
-const $image: ThemedStyle<ImageStyle> = () => ({
+const $card: ThemedStyle<ViewStyle> = ({ colors }) => ({
+  backgroundColor: colors.palette.white,
+  borderWidth: 3,
+  borderColor: colors.border,
+  overflow: "hidden",
+})
+
+const $image: ImageStyle = {
   width: "100%",
   aspectRatio: 1,
-})
+}
 
 const $info: ThemedStyle<ViewStyle> = ({ spacing }) => ({
   padding: spacing.xs,
@@ -67,4 +67,5 @@ const $info: ThemedStyle<ViewStyle> = ({ spacing }) => ({
 
 const $name: ThemedStyle<TextStyle> = ({ colors }) => ({
   color: colors.text,
+  letterSpacing: 0.5,
 })

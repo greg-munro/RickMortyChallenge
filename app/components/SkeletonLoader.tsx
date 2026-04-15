@@ -1,43 +1,42 @@
 import { useEffect, useRef } from "react"
-import { Animated, StyleProp, View, ViewStyle } from "react-native"
+import { Animated, StyleProp, ViewStyle } from "react-native"
 
 import { useAppTheme } from "@/theme/context"
 import type { ThemedStyle } from "@/theme/types"
 
 interface SkeletonLoaderProps {
-  /** Width of the skeleton box */
   width?: number | `${number}%`
-  /** Height of the skeleton box */
   height?: number
-  /** Border radius */
   borderRadius?: number
   style?: StyleProp<ViewStyle>
 }
 
 /**
- * Animated shimmer skeleton box used as a loading placeholder.
- * Uses Animated.Value so it works without Reanimated (no worklet needed).
+ * Neo-brutalist skeleton loader.
+ * Pulses between the neutral300 swatch (#e8e5dd) and pure black at low opacity,
+ * giving a graphic ink-blot feel rather than a soft shimmer.
+ * borderRadius defaults to 0 (sharp) to match the neo aesthetic.
  */
 export function SkeletonLoader({
   width = "100%",
   height = 20,
-  borderRadius = 8,
+  borderRadius = 0,
   style,
 }: SkeletonLoaderProps) {
   const { themed } = useAppTheme()
-  const opacity = useRef(new Animated.Value(0.3)).current
+  const opacity = useRef(new Animated.Value(0.15)).current
 
   useEffect(() => {
     const pulse = Animated.loop(
       Animated.sequence([
         Animated.timing(opacity, {
-          toValue: 1,
-          duration: 700,
+          toValue: 0.45,
+          duration: 600,
           useNativeDriver: true,
         }),
         Animated.timing(opacity, {
-          toValue: 0.3,
-          duration: 700,
+          toValue: 0.15,
+          duration: 600,
           useNativeDriver: true,
         }),
       ]),
@@ -48,15 +47,11 @@ export function SkeletonLoader({
 
   return (
     <Animated.View
-      style={[
-        themed($skeleton),
-        { width, height, borderRadius, opacity },
-        style,
-      ]}
+      style={[themed($skeleton), { width, height, borderRadius, opacity }, style]}
     />
   )
 }
 
 const $skeleton: ThemedStyle<ViewStyle> = ({ colors }) => ({
-  backgroundColor: colors.palette.neutral300,
+  backgroundColor: colors.text, // pure ink — pulses in opacity
 })

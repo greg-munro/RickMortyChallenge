@@ -1,85 +1,79 @@
+// Neo-brutalist palette
+// Philosophy: unapologetic visibility — pure black ink, cream canvas, vibrant accent bursts.
+// No grays. No subtle transparencies. High contrast everywhere.
 const palette = {
+  // ── Canvas & Ink ──────────────────────────────────────────────────────────
+  cream: "#FFFDF5", // main background — aged paper / newsprint
+  ink: "#000000", // all text, all borders, all shadows
+  white: "#FFFFFF", // card interiors, contrast panels
+
+  // ── Accent Burst Colors ───────────────────────────────────────────────────
+  accent: "#FF6B6B", // Hot Red — primary action, badges, tint
+  secondary: "#FFD93D", // Vivid Yellow — secondary action, section highlights
+  muted: "#C4B5FD", // Soft Violet — tertiary, subtle backgrounds
+
+  // ── Status Colors (vivid, high-contrast) ─────────────────────────────────
+  statusAlive: "#4ade80", // vivid green
+  statusDead: "#FF6B6B", // reuse accent red
+  statusUnknown: "#C4B5FD", // reuse muted violet
+
+  // ── Legacy palette keys kept for Ignite internals ─────────────────────────
   neutral100: "#FFFFFF",
-  neutral200: "#F4F2F1",
-  neutral300: "#D7CEC9",
-  neutral400: "#B6ACA6",
-  neutral500: "#978F8A",
-  neutral600: "#564E4A",
-  neutral700: "#3C3836",
-  neutral800: "#191015",
+  neutral200: "#FFFDF5",
+  neutral300: "#e8e5dd", // skeleton loader bg
+  neutral400: "#000000",
+  neutral500: "#000000",
+  neutral600: "#000000",
+  neutral700: "#000000",
+  neutral800: "#000000",
   neutral900: "#000000",
 
-  primary100: "#F4E0D9",
-  primary200: "#E8C1B4",
-  primary300: "#DDA28E",
-  primary400: "#D28468",
-  primary500: "#C76542",
-  primary600: "#A54F31",
+  primary100: "#FFD93D",
+  primary200: "#FFD93D",
+  primary300: "#FF6B6B",
+  primary400: "#FF6B6B",
+  primary500: "#FF6B6B",
+  primary600: "#cc3333",
 
-  secondary100: "#DCDDE9",
-  secondary200: "#BCC0D6",
-  secondary300: "#9196B9",
-  secondary400: "#626894",
-  secondary500: "#41476E",
+  secondary100: "#C4B5FD",
+  secondary200: "#C4B5FD",
+  secondary300: "#C4B5FD",
+  secondary400: "#C4B5FD",
+  secondary500: "#C4B5FD",
 
-  accent100: "#FFEED4",
-  accent200: "#FFE1B2",
-  accent300: "#FDD495",
-  accent400: "#FBC878",
-  accent500: "#FFBB50",
+  accent100: "#FFD93D",
+  accent200: "#FFD93D",
+  accent300: "#FFD93D",
+  accent400: "#FFD93D",
+  accent500: "#FFD93D",
 
-  angry100: "#F2D6CD",
-  angry500: "#C03403",
+  angry100: "#FFD93D", // error background → yellow banner
+  angry500: "#FF6B6B", // error foreground → accent red
 
-  overlay20: "rgba(25, 16, 21, 0.2)",
-  overlay50: "rgba(25, 16, 21, 0.5)",
+  overlay20: "rgba(0, 0, 0, 0.2)",
+  overlay50: "rgba(0, 0, 0, 0.5)",
 } as const
 
 export const colors = {
-  /**
-   * The palette is available to use, but prefer using the name.
-   * This is only included for rare, one-off cases. Try to use
-   * semantic names as much as possible.
-   */
   palette,
-  /**
-   * A helper for making something see-thru.
-   */
   transparent: "rgba(0, 0, 0, 0)",
-  /**
-   * The default text color in many components.
-   */
-  text: palette.neutral800,
-  /**
-   * Secondary text information.
-   */
-  textDim: palette.neutral600,
-  /**
-   * The default color of the screen background.
-   */
-  background: palette.neutral200,
-  /**
-   * The default border color.
-   */
-  border: palette.neutral400,
-  /**
-   * The main tinting color.
-   */
-  tint: palette.primary500,
-  /**
-   * The inactive tinting color.
-   */
+
+  /** Primary text — pure ink */
+  text: palette.ink,
+  /** Secondary text — still ink (neo-brutalism forbids subtle gray) */
+  textDim: palette.ink,
+  /** Main screen background — warm cream canvas */
+  background: palette.cream,
+  /** All borders — pure black */
+  border: palette.ink,
+  /** Primary tint / action color — Hot Red */
+  tint: palette.accent,
+  /** Inactive tint */
   tintInactive: palette.neutral300,
-  /**
-   * A subtle color used for lines.
-   */
-  separator: palette.neutral300,
-  /**
-   * Error messages.
-   */
+  /** Dividers / separators — pure black */
+  separator: palette.ink,
+  /** Error indicator */
   error: palette.angry500,
-  /**
-   * Error Background.
-   */
+  /** Error background */
   errorBackground: palette.angry100,
 } as const

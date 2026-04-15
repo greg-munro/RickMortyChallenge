@@ -5,27 +5,26 @@ import type { ThemedStyle } from "@/theme/types"
 import { Text } from "./Text"
 
 interface SectionHeaderProps {
-  /** e.g. "Season 1" */
   title: string
-  /** Number of episodes in this section */
   episodeCount: number
 }
 
 /**
- * Sticky section header used in the episode list SectionList.
- * Shows the season name and a dimmed episode count badge.
+ * Neo-brutalist sticky section header.
+ * Hot red banner with white uppercase text, thick top and bottom borders.
+ * Episode count shown in a black pill on the right.
  */
 export function SectionHeader({ title, episodeCount }: SectionHeaderProps) {
   const { themed } = useAppTheme()
 
   return (
     <View style={themed($container)}>
-      <Text text={title} preset="subheading" style={themed($title)} />
+      <Text text={title.toUpperCase()} weight="bold" style={themed($title)} />
       <View style={themed($badge)}>
         <Text
-          text={`${episodeCount} ep${episodeCount !== 1 ? "s" : ""}`}
+          text={`${episodeCount} EP${episodeCount !== 1 ? "S" : ""}`}
           size="xxs"
-          weight="medium"
+          weight="bold"
           style={themed($badgeText)}
         />
       </View>
@@ -37,24 +36,30 @@ const $container: ThemedStyle<ViewStyle> = ({ colors, spacing }) => ({
   flexDirection: "row",
   alignItems: "center",
   justifyContent: "space-between",
-  backgroundColor: colors.background,
+  backgroundColor: colors.palette.accent,
   paddingHorizontal: spacing.md,
   paddingVertical: spacing.xs,
-  borderBottomWidth: 1,
-  borderBottomColor: colors.separator,
+  borderTopWidth: 3,
+  borderBottomWidth: 3,
+  borderColor: colors.border,
 })
 
 const $title: ThemedStyle<TextStyle> = ({ colors }) => ({
-  color: colors.text,
+  color: colors.palette.white,
+  fontSize: 13,
+  letterSpacing: 2,
+  textTransform: "uppercase",
 })
 
 const $badge: ThemedStyle<ViewStyle> = ({ colors, spacing }) => ({
-  backgroundColor: colors.palette.primary100,
-  borderRadius: 10,
+  backgroundColor: colors.palette.ink,
+  borderWidth: 2,
+  borderColor: colors.palette.ink,
   paddingHorizontal: spacing.xs,
-  paddingVertical: spacing.xxxs,
+  paddingVertical: 2,
 })
 
-const $badgeText: ThemedStyle<TextStyle> = ({ colors }) => ({
-  color: colors.palette.primary500,
+const $badgeText: ThemedStyle<TextStyle> = () => ({
+  color: "#FFFFFF",
+  letterSpacing: 1,
 })
