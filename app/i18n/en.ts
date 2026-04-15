@@ -6,6 +6,32 @@ const en = {
     cancel: "Cancel",
     back: "Back",
     logOut: "Log Out",
+    retry: "Try Again",
+  },
+
+  episodeListScreen: {
+    title: "Episodes",
+    searchPlaceholder: "Search episodes...",
+    noResults: "No episodes match your search.",
+    episodeCount: "{{count}} episode",
+    episodeCount_plural: "{{count}} episodes",
+    errorHeading: "Couldn't load episodes",
+    errorContent: "Check your connection and try again.",
+  },
+
+  episodeDetailScreen: {
+    airDate: "Air Date",
+    characters: "Characters",
+    characterCount: "{{count}} character",
+    characterCount_plural: "{{count}} characters",
+    errorLoadingCharacters: "Couldn't load characters.",
+    retry: "Retry",
+  },
+
+  characterStatus: {
+    Alive: "Alive",
+    Dead: "Dead",
+    unknown: "Unknown",
   },
   welcomeScreen: {
     postscript:

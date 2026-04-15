@@ -7,6 +7,7 @@ const fr: Translations = {
     cancel: "Annuler",
     back: "Retour",
     logOut: "Déconnexion",
+    retry: "Réessayer",
   },
   welcomeScreen: {
     postscript:
@@ -123,6 +124,29 @@ const fr: Translations = {
       content:
         "Aucun favori n'a été ajouté pour le moment. Appuyez sur le cœur d'un épisode pour l'ajouter à vos favoris !",
     },
+  },
+
+  episodeListScreen: {
+    title: "Épisodes",
+    searchPlaceholder: "Rechercher des épisodes...",
+    noResults: "Aucun épisode ne correspond à votre recherche.",
+    episodeCount: "{{count}} épisode",
+    episodeCount_plural: "{{count}} épisodes",
+    errorHeading: "Impossible de charger les épisodes",
+    errorContent: "Vérifiez votre connexion et réessayez.",
+  },
+  episodeDetailScreen: {
+    airDate: "Date de diffusion",
+    characters: "Personnages",
+    characterCount: "{{count}} personnage",
+    characterCount_plural: "{{count}} personnages",
+    errorLoadingCharacters: "Impossible de charger les personnages.",
+    retry: "Réessayer",
+  },
+  characterStatus: {
+    Alive: "Vivant",
+    Dead: "Mort",
+    unknown: "Inconnu",
   },
 
   ...demoFr,
