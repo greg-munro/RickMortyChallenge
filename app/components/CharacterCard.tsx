@@ -88,6 +88,19 @@ export function CharacterCard({ character, index = 0 }: CharacterCardProps) {
               style={themed($name)}
             />
             <StatusBadge status={character.status} />
+            <Text
+              text={character.species}
+              size="xs"
+              weight="medium"
+              numberOfLines={1}
+              style={themed($species)}
+            />
+            <Text
+              text={`${character.episode.length} EP${character.episode.length !== 1 ? "S" : ""}`}
+              size="xs"
+              weight="medium"
+              style={themed($epCount)}
+            />
           </View>
         </View>
       </HardShadowView>
@@ -133,5 +146,17 @@ const $info: ThemedStyle<ViewStyle> = ({ spacing }) => ({
 
 const $name: ThemedStyle<TextStyle> = ({ colors }) => ({
   color: colors.text,
+  letterSpacing: 0.5,
+})
+
+const $species: ThemedStyle<TextStyle> = ({ colors }) => ({
+  color: colors.text,
+  opacity: 0.65,
+  letterSpacing: 0.3,
+})
+
+const $epCount: ThemedStyle<TextStyle> = ({ colors }) => ({
+  color: colors.text,
+  opacity: 0.45,
   letterSpacing: 0.5,
 })
