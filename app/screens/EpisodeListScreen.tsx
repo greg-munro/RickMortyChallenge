@@ -129,7 +129,7 @@ export const EpisodeListScreen: FC<EpisodeListScreenProps> = ({ navigation }) =>
 
   // ── Render ────────────────────────────────────────────────────────────────
   return (
-    <Screen preset="fixed" safeAreaEdges={["top"]} style={themed($screen)}>
+    <Screen preset="fixed" safeAreaEdges={["top"]} style={themed($screen)} contentContainerStyle={$flex}>
       {/* Header — thick bottom border, black on cream */}
       <View style={themed($header)}>
         <Text
@@ -168,7 +168,7 @@ export const EpisodeListScreen: FC<EpisodeListScreenProps> = ({ navigation }) =>
       {episodesLoading && episodes.length === 0 ? (
         renderSkeleton()
       ) : episodesError && episodes.length === 0 ? (
-        renderError()
+        <View style={$flex}>{renderError()}</View>
       ) : (
         <SectionList
           sections={sections}
@@ -303,3 +303,5 @@ const $emptySearchText: ThemedStyle<TextStyle> = ({ colors }) => ({
   letterSpacing: 1,
   textAlign: "center",
 })
+
+const $flex: ViewStyle = { flex: 1 }

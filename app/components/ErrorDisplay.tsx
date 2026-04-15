@@ -1,6 +1,4 @@
-import { useRef, useEffect } from "react"
-import { TextStyle, View, ViewStyle } from "react-native"
-import LottieView from "lottie-react-native"
+import { Image, ImageStyle, TextStyle, View, ViewStyle } from "react-native"
 
 import { Text } from "@/components/Text"
 import { NeoButton } from "@/components/NeoButton"
@@ -18,7 +16,7 @@ interface ErrorDisplayProps {
 /**
  * Neo-brutalist error panel.
  * Yellow (#FFD93D) container with thick black border + hard shadow.
- * Morty-cry Lottie animation, uppercase heading, NeoButton for retry.
+ * Rick & Morty error image, uppercase heading, NeoButton for retry.
  */
 export function ErrorDisplay({
   heading,
@@ -27,22 +25,15 @@ export function ErrorDisplay({
   onAction,
 }: ErrorDisplayProps) {
   const { themed } = useAppTheme()
-  const lottieRef = useRef<LottieView>(null)
-
-  useEffect(() => {
-    lottieRef.current?.play()
-  }, [])
 
   return (
     <View style={themed($outer)}>
       <HardShadowView size="md" style={themed($shadowWrapper)}>
         <View style={themed($container)}>
-          <LottieView
-            ref={lottieRef}
-            source={require("../../assets/animations/morty-cry.json")}
-            style={$animation}
-            autoPlay
-            loop
+          <Image
+            source={require("../../assets/images/rmerror.gif")}
+            style={$image}
+            resizeMode="contain"
           />
           <Text
             text={heading.toUpperCase()}
@@ -72,6 +63,7 @@ const $outer: ThemedStyle<ViewStyle> = ({ spacing }) => ({
   alignItems: "center",
   justifyContent: "center",
   padding: spacing.xl,
+  paddingBottom: spacing.xl * 6,
 })
 
 const $shadowWrapper: ThemedStyle<ViewStyle> = () => ({
@@ -87,9 +79,9 @@ const $container: ThemedStyle<ViewStyle> = ({ colors, spacing }) => ({
   gap: spacing.sm,
 })
 
-const $animation: ViewStyle = {
-  width: 160,
-  height: 160,
+const $image: ImageStyle = {
+  width: 200,
+  height: 200,
 }
 
 const $heading: ThemedStyle<TextStyle> = ({ colors }) => ({
