@@ -28,6 +28,7 @@ import { RickMortyProvider } from "./context/RickMortyContext"
 import { initI18n } from "./i18n"
 import { AppNavigator } from "./navigators/AppNavigator"
 import { useNavigationPersistence } from "./navigators/navigationUtilities"
+import { SplashScreen } from "./components/SplashScreen"
 import { ThemeProvider } from "./theme/context"
 import { customFontsToLoad } from "./theme/typography"
 import { loadDateFnsLocale } from "./utils/formatDate"
@@ -58,6 +59,7 @@ export function App() {
 
   const [areFontsLoaded, fontLoadError] = useFonts(customFontsToLoad)
   const [isI18nInitialized, setIsI18nInitialized] = useState(false)
+  const [showSplash, setShowSplash] = useState(true)
 
   useEffect(() => {
     initI18n()
@@ -88,6 +90,7 @@ export function App() {
               initialState={initialNavigationState}
               onStateChange={onNavigationStateChange}
             />
+            {showSplash && <SplashScreen onFinish={() => setShowSplash(false)} />}
           </RickMortyProvider>
         </ThemeProvider>
       </KeyboardProvider>

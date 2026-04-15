@@ -19,9 +19,9 @@ import { groupEpisodesBySeason, EpisodeSection } from "@/utils/episodeUtils"
 import { EpisodeListItem } from "@/components/EpisodeListItem"
 import { SectionHeader } from "@/components/SectionHeader"
 import { SkeletonLoader } from "@/components/SkeletonLoader"
+import { ErrorDisplay } from "@/components/ErrorDisplay"
 import { Text } from "@/components/Text"
 import { Icon } from "@/components/Icon"
-import { EmptyState } from "@/components/EmptyState"
 import { Screen } from "@/components/Screen"
 
 // ─── Types ───────────────────────────────────────────────────────────────────
@@ -110,12 +110,10 @@ export const EpisodeListScreen: FC<EpisodeListScreenProps> = ({ navigation }) =>
 
   // ── Error state ───────────────────────────────────────────────────────────
   const renderError = () => (
-    <EmptyState
-      preset="generic"
+    <ErrorDisplay
       heading="Couldn't load episodes"
-      content={episodesError ?? "Check your connection and try again."}
-      buttonOnPress={() => fetchEpisodes(true)}
-      button="Try Again"
+      message={episodesError ?? "Check your connection and try again."}
+      onAction={() => fetchEpisodes(true)}
     />
   )
 

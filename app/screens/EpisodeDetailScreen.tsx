@@ -15,6 +15,7 @@ import { useAppTheme } from "@/theme/context"
 import type { ThemedStyle } from "@/theme/types"
 import { CharacterCard } from "@/components/CharacterCard"
 import { SkeletonLoader } from "@/components/SkeletonLoader"
+import { ErrorDisplay } from "@/components/ErrorDisplay"
 import { Text } from "@/components/Text"
 import { Icon } from "@/components/Icon"
 import { Screen } from "@/components/Screen"
@@ -124,15 +125,11 @@ export const EpisodeDetailScreen: FC<EpisodeDetailScreenProps> = ({ navigation, 
         {/* Loading / error state for characters */}
         {isLoading && renderCharacterSkeletons()}
         {!isLoading && error && (
-          <View style={themed($errorContainer)}>
-            <Text text={error} size="sm" style={themed($errorText)} />
-            <TouchableOpacity
-              style={themed($retryButton)}
-              onPress={() => fetchCharactersForEpisode(episode)}
-            >
-              <Text tx="episodeDetailScreen:retry" size="sm" weight="bold" style={themed($retryText)} />
-            </TouchableOpacity>
-          </View>
+          <ErrorDisplay
+            heading="Couldn't load characters"
+            message={error}
+            onAction={() => fetchCharactersForEpisode(episode)}
+          />
         )}
       </View>
     )
@@ -264,28 +261,6 @@ const $divider: ThemedStyle<ViewStyle> = ({ colors, spacing }) => ({
 const $sectionTitle: ThemedStyle<TextStyle> = ({ colors, spacing }) => ({
   color: colors.text,
   marginBottom: spacing.sm,
-})
-
-const $errorContainer: ThemedStyle<ViewStyle> = ({ spacing }) => ({
-  alignItems: "center",
-  paddingVertical: spacing.lg,
-  gap: spacing.sm,
-})
-
-const $errorText: ThemedStyle<TextStyle> = ({ colors }) => ({
-  color: colors.error,
-  textAlign: "center",
-})
-
-const $retryButton: ThemedStyle<ViewStyle> = ({ colors, spacing }) => ({
-  backgroundColor: colors.tint,
-  borderRadius: 8,
-  paddingHorizontal: spacing.md,
-  paddingVertical: spacing.xs,
-})
-
-const $retryText: ThemedStyle<TextStyle> = ({ colors }) => ({
-  color: colors.palette.neutral100,
 })
 
 const $skeletonGrid: ThemedStyle<ViewStyle> = () => ({
