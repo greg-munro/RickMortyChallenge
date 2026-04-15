@@ -181,6 +181,8 @@ export const EpisodeListScreen: FC<EpisodeListScreenProps> = ({ navigation }) =>
           ListEmptyComponent={ListEmptyComponent}
           contentContainerStyle={themed($listContent)}
           showsVerticalScrollIndicator={false}
+          keyboardShouldPersistTaps="handled"
+          keyboardDismissMode="on-drag"
         />
       )}
     </Screen>

@@ -143,7 +143,7 @@ export const EpisodeDetailScreen: FC<EpisodeDetailScreenProps> = ({ navigation, 
         </View>
 
         <View style={themed($metaRow)}>
-          <Text text="◈" style={themed($metaIcon)} />
+          <Text text="👤" style={themed($metaIcon)} />
           <Text
             text={`${episode.characters.length} CHARACTER${episode.characters.length !== 1 ? "S" : ""}`}
             size="sm"

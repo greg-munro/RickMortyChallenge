@@ -45,6 +45,7 @@ export function CharacterCard({ character }: CharacterCardProps) {
 
 const $wrapper: ThemedStyle<ViewStyle> = ({ spacing }) => ({
   flex: 1,
+  maxWidth: "50%",
   margin: spacing.xs / 2,
 })
 

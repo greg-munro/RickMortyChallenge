@@ -1,4 +1,4 @@
-import { TextStyle, ViewStyle } from "react-native"
+import { TextStyle, View, ViewStyle } from "react-native"
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
@@ -69,11 +69,25 @@ export function StatusFilterChip({ status, count, isSelected, onPress }: StatusF
         }}
       >
         <Text
-          text={`${label.toUpperCase()} ${count}`}
+          text={label.toUpperCase()}
           size="xs"
           weight="bold"
           style={[themed($label), isSelected && ($labelSelected as TextStyle)]}
         />
+        <View style={[
+          $countBadge,
+          isSelected && { backgroundColor: "#FFFFFF" },
+        ]}>
+          <Text
+            text={String(count)}
+            size="xs"
+            weight="bold"
+            style={[
+              $countText,
+              isSelected && { color: "#000000" },
+            ]}
+          />
+        </View>
       </Animated.View>
     </HardShadowView>
   )
@@ -82,6 +96,7 @@ export function StatusFilterChip({ status, count, isSelected, onPress }: StatusF
 const $chip: ThemedStyle<ViewStyle> = ({ colors, spacing }) => ({
   flexDirection: "row",
   alignItems: "center",
+  gap: 6,
   borderColor: colors.border,
   paddingHorizontal: spacing.sm,
   paddingVertical: spacing.xxxs + 2,
@@ -94,4 +109,20 @@ const $label: ThemedStyle<TextStyle> = ({ colors }) => ({
 
 const $labelSelected: TextStyle = {
   color: "#000000",
+}
+
+const $countBadge: ViewStyle = {
+  backgroundColor: "#000000",
+  paddingHorizontal: 5,
+  paddingVertical: 1,
+  minWidth: 20,
+  alignItems: "center",
+}
+
+const $countText: TextStyle = {
+  color: "#FFFFFF",
+  fontSize: 10,
+  lineHeight: 14,
+  fontWeight: "700",
+  letterSpacing: 0.5,
 }
