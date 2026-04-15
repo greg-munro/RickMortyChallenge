@@ -3,22 +3,11 @@ import { View, ViewStyle, TextStyle } from "react-native"
 import { useAppTheme } from "@/theme/context"
 import type { ThemedStyle } from "@/theme/types"
 import type { CharacterStatus } from "@/services/api/types"
+import { STATUS_COLORS, STATUS_LABELS } from "@/utils/characterUtils"
 import { Text } from "./Text"
 
 interface StatusBadgeProps {
   status: CharacterStatus
-}
-
-const STATUS_COLORS: Record<CharacterStatus, string> = {
-  Alive: "#55CC44",
-  Dead: "#D63D2E",
-  unknown: "#9E9E9E",
-}
-
-const STATUS_LABELS: Record<CharacterStatus, string> = {
-  Alive: "Alive",
-  Dead: "Dead",
-  unknown: "Unknown",
 }
 
 /**

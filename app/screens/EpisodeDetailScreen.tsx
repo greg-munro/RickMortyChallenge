@@ -1,7 +1,8 @@
-import { FC, useCallback, useEffect, useMemo } from "react"
+import { FC, useCallback, useEffect, useMemo, useState } from "react"
 import {
   FlatList,
   ListRenderItemInfo,
+  ScrollView,
   TextStyle,
   TouchableOpacity,
   View,
@@ -10,12 +11,13 @@ import {
 
 import { useRickMorty } from "@/context/RickMortyContext"
 import type { AppStackScreenProps } from "@/navigators/navigationTypes"
-import type { RickMortyCharacter } from "@/services/api/types"
+import type { CharacterStatus, RickMortyCharacter } from "@/services/api/types"
 import { useAppTheme } from "@/theme/context"
 import type { ThemedStyle } from "@/theme/types"
 import { CharacterCard } from "@/components/CharacterCard"
 import { SkeletonLoader } from "@/components/SkeletonLoader"
 import { ErrorDisplay } from "@/components/ErrorDisplay"
+import { StatusFilterChip } from "@/components/StatusFilterChip"
 import { Text } from "@/components/Text"
 import { Icon } from "@/components/Icon"
 import { Screen } from "@/components/Screen"
@@ -37,6 +39,21 @@ export const EpisodeDetailScreen: FC<EpisodeDetailScreenProps> = ({ navigation, 
   } = useRickMorty()
   const { themed, theme } = useAppTheme()
 
+  // ── Filter state ──────────────────────────────────────────────────────────
+  const [activeFilters, setActiveFilters] = useState<Set<CharacterStatus>>(new Set())
+
+  const toggleFilter = useCallback((status: CharacterStatus) => {
+    setActiveFilters((prev) => {
+      const next = new Set(prev)
+      if (next.has(status)) {
+        next.delete(status)
+      } else {
+        next.add(status)
+      }
+      return next
+    })
+  }, [])
+
   // ── Derive episode from context (already loaded) ──────────────────────────
   const episode = useMemo(
     () => episodes.find((ep) => ep.id === episodeId) ?? null,
@@ -47,10 +64,35 @@ export const EpisodeDetailScreen: FC<EpisodeDetailScreenProps> = ({ navigation, 
   const isLoading = episode ? (charactersLoading[episode.id] ?? false) : false
   const error = episode ? (charactersError[episode.id] ?? null) : null
 
+  // ── Reset filters when episode changes ────────────────────────────────────
+  useEffect(() => {
+    setActiveFilters(new Set())
+  }, [episodeId])
+
   // ── Fetch characters on mount ─────────────────────────────────────────────
   useEffect(() => {
     if (episode) fetchCharactersForEpisode(episode)
   }, [episode, fetchCharactersForEpisode])
+
+  // ── Available statuses (only those present in this episode) ──────────────
+  const statusCounts = useMemo(() => {
+    const counts = new Map<CharacterStatus, number>()
+    for (const c of characters) {
+      counts.set(c.status, (counts.get(c.status) ?? 0) + 1)
+    }
+    return counts
+  }, [characters])
+
+  const availableStatuses = useMemo(
+    () => (["Alive", "Dead", "unknown"] as CharacterStatus[]).filter((s) => statusCounts.has(s)),
+    [statusCounts],
+  )
+
+  // ── Filtered characters ───────────────────────────────────────────────────
+  const filteredCharacters = useMemo(() => {
+    if (activeFilters.size === 0) return characters
+    return characters.filter((c) => activeFilters.has(c.status))
+  }, [characters, activeFilters])
 
   // ── Render helpers ────────────────────────────────────────────────────────
   const renderCharacter = useCallback(
@@ -122,6 +164,26 @@ export const EpisodeDetailScreen: FC<EpisodeDetailScreenProps> = ({ navigation, 
           style={themed($sectionTitle)}
         />
 
+        {/* Status filter chips — only shown once characters are loaded */}
+        {!isLoading && !error && availableStatuses.length > 0 && (
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={themed($chipsRow)}
+            style={themed($chipsScroll)}
+          >
+            {availableStatuses.map((status) => (
+              <StatusFilterChip
+                key={status}
+                status={status}
+                count={statusCounts.get(status) ?? 0}
+                isSelected={activeFilters.has(status)}
+                onPress={() => toggleFilter(status)}
+              />
+            ))}
+          </ScrollView>
+        )}
+
         {/* Loading / error state for characters */}
         {isLoading && renderCharacterSkeletons()}
         {!isLoading && error && (
@@ -133,7 +195,18 @@ export const EpisodeDetailScreen: FC<EpisodeDetailScreenProps> = ({ navigation, 
         )}
       </View>
     )
-  }, [episode, isLoading, error, themed, theme.colors.textDim, fetchCharactersForEpisode])
+  }, [
+    episode,
+    isLoading,
+    error,
+    availableStatuses,
+    statusCounts,
+    activeFilters,
+    toggleFilter,
+    themed,
+    theme.colors.textDim,
+    fetchCharactersForEpisode,
+  ])
 
   // ── Guard: episode not found ──────────────────────────────────────────────
   if (!episode) {
@@ -164,7 +237,7 @@ export const EpisodeDetailScreen: FC<EpisodeDetailScreenProps> = ({ navigation, 
       {/* Character grid with episode info in the header */}
       {!isLoading && !error ? (
         <FlatList<RickMortyCharacter>
-          data={characters}
+          data={filteredCharacters}
           keyExtractor={keyExtractor}
           renderItem={renderCharacter}
           numColumns={2}
@@ -261,6 +334,18 @@ const $divider: ThemedStyle<ViewStyle> = ({ colors, spacing }) => ({
 const $sectionTitle: ThemedStyle<TextStyle> = ({ colors, spacing }) => ({
   color: colors.text,
   marginBottom: spacing.sm,
+})
+
+const $chipsScroll: ThemedStyle<ViewStyle> = ({ spacing }) => ({
+  marginBottom: spacing.md,
+  marginHorizontal: -spacing.md,
+})
+
+const $chipsRow: ThemedStyle<ViewStyle> = ({ spacing }) => ({
+  flexDirection: "row",
+  gap: spacing.xs,
+  paddingHorizontal: spacing.md,
+  paddingVertical: spacing.xxxs,
 })
 
 const $skeletonGrid: ThemedStyle<ViewStyle> = () => ({
