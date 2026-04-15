@@ -1,5 +1,6 @@
 import { FC, useCallback, useMemo, useRef, useState } from "react"
 import {
+  RefreshControl,
   SectionList,
   SectionListData,
   SectionListRenderItemInfo,
@@ -183,6 +184,14 @@ export const EpisodeListScreen: FC<EpisodeListScreenProps> = ({ navigation }) =>
           showsVerticalScrollIndicator={false}
           keyboardShouldPersistTaps="handled"
           keyboardDismissMode="on-drag"
+          refreshControl={
+            <RefreshControl
+              refreshing={episodesLoading}
+              onRefresh={() => fetchEpisodes(true)}
+              tintColor="#FF6B6B"
+              colors={["#FF6B6B"]}
+            />
+          }
         />
       )}
     </Screen>
