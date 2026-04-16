@@ -1,5 +1,12 @@
-import { FC, useCallback, useMemo, useRef, useState } from "react"
+import { FC, useCallback, useEffect, useMemo, useRef, useState } from "react"
 import NetInfo from "@react-native-community/netinfo"
+import Animated, {
+  useAnimatedStyle,
+  useSharedValue,
+  withSequence,
+  withSpring,
+  withTiming,
+} from "react-native-reanimated"
 import {
   RefreshControl,
   SectionList,
@@ -23,7 +30,6 @@ import { EpisodeListItem } from "@/components/EpisodeListItem"
 import { SectionHeader } from "@/components/SectionHeader"
 import { SkeletonLoader } from "@/components/SkeletonLoader"
 import { ErrorDisplay } from "@/components/ErrorDisplay"
-import { OfflineBanner } from "@/components/OfflineBanner"
 import { Text } from "@/components/Text"
 import { Screen } from "@/components/Screen"
 
@@ -33,13 +39,43 @@ export const EpisodeListScreen: FC<EpisodeListScreenProps> = ({ navigation }) =>
   const { episodes, episodesLoading, episodesError, fetchEpisodes } = useRickMorty()
   const { themed, theme } = useAppTheme()
   const isOffline = useOfflineStatus()
-  const pulseRef = useRef<(() => void) | null>(null)
 
   // ── Search state ─────────────────────────────────────────────────────────
   const [searchQuery, setSearchQuery] = useState("")
   const [debouncedQuery, setDebouncedQuery] = useState("")
   const debounceTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
 
+  // ── Offline chip animation ────────────────────────────────────────────────
+  const chipScale = useSharedValue(0)
+  const chipOpacity = useSharedValue(0)
+  const chipTranslateX = useSharedValue(0)
+
+  const chipAnimStyle = useAnimatedStyle(() => ({
+    opacity: chipOpacity.value,
+    transform: [{ scale: chipScale.value }, { translateX: chipTranslateX.value }],
+  }))
+
+  useEffect(() => {
+    if (isOffline) {
+      chipScale.value = withSpring(1, { damping: 16, stiffness: 260, mass: 0.6 })
+      chipOpacity.value = withTiming(1, { duration: 200 })
+    } else {
+      chipScale.value = withTiming(0, { duration: 180 })
+      chipOpacity.value = withTiming(0, { duration: 180 })
+    }
+  }, [isOffline])
+
+  const triggerChipShake = useCallback(() => {
+    chipTranslateX.value = withSequence(
+      withTiming(-6, { duration: 40 }),
+      withTiming(6, { duration: 40 }),
+      withTiming(-4, { duration: 40 }),
+      withTiming(4, { duration: 40 }),
+      withTiming(0, { duration: 40 }),
+    )
+  }, [])
+
+  // ── Search handlers ───────────────────────────────────────────────────────
   const handleSearchChange = useCallback((text: string) => {
     setSearchQuery(text)
     if (debounceTimer.current) clearTimeout(debounceTimer.current)
@@ -54,17 +90,16 @@ export const EpisodeListScreen: FC<EpisodeListScreenProps> = ({ navigation }) =>
     if (debounceTimer.current) clearTimeout(debounceTimer.current)
   }, [])
 
+  // ── Pull-to-refresh ───────────────────────────────────────────────────────
   const handleRefresh = useCallback(async () => {
-    if (isOffline) {
-      const state = await NetInfo.fetch()
-      const stillOffline = !state.isConnected || !state.isInternetReachable
-      if (stillOffline) {
-        pulseRef.current?.()
-        return
-      }
+    const state = await NetInfo.fetch()
+    const currentlyOffline = !state.isConnected || state.isInternetReachable === false
+    if (currentlyOffline) {
+      triggerChipShake()
+      return
     }
     fetchEpisodes(true)
-  }, [isOffline, fetchEpisodes])
+  }, [fetchEpisodes, triggerChipShake])
 
   // ── Filtered + grouped data ───────────────────────────────────────────────
   const sections = useMemo<SectionListData<RickMortyEpisode, EpisodeSection>[]>(() => {
@@ -148,18 +183,21 @@ export const EpisodeListScreen: FC<EpisodeListScreenProps> = ({ navigation }) =>
   // ── Render ────────────────────────────────────────────────────────────────
   return (
     <Screen preset="fixed" safeAreaEdges={["top"]} style={themed($screen)} contentContainerStyle={$flex}>
-      {/* Offline banner — absolutely positioned, slides down when no connection */}
-      <OfflineBanner isOffline={isOffline} pulseRef={pulseRef} />
-
-      {/* Header — thick bottom border, black on cream */}
+      {/* Header — title on left, offline chip on right */}
       <View style={themed($header)}>
-        <Text
-          preset="heading"
-          tx="episodeListScreen:title"
-          style={themed($headerTitle)}
-        />
-        {/* Red accent underline beneath title */}
-        <View style={themed($headerUnderline)} />
+        <View style={$headerRow}>
+          <View style={$headerLeft}>
+            <Text
+              preset="heading"
+              tx="episodeListScreen:title"
+              style={themed($headerTitle)}
+            />
+            <View style={themed($headerUnderline)} />
+          </View>
+          <Animated.View style={[themed($offlineChip), chipAnimStyle]} pointerEvents="none">
+            <Text text="OFFLINE" size="xs" weight="bold" style={$offlineChipText} />
+          </Animated.View>
+        </View>
       </View>
 
       {/* Search bar — sharp corners, thick border, bold text */}
@@ -234,6 +272,16 @@ const $header: ThemedStyle<ViewStyle> = ({ colors, spacing }) => ({
   backgroundColor: colors.background,
 })
 
+const $headerRow: ViewStyle = {
+  flexDirection: "row",
+  alignItems: "center",
+  justifyContent: "space-between",
+}
+
+const $headerLeft: ViewStyle = {
+  flex: 1,
+}
+
 const $headerTitle: ThemedStyle<TextStyle> = ({ colors, typography }) => ({
   color: colors.text,
   fontFamily: typography.primary.black,
@@ -248,6 +296,22 @@ const $headerUnderline: ThemedStyle<ViewStyle> = ({ colors }) => ({
   backgroundColor: colors.palette.accent,
   marginTop: 4,
 })
+
+const $offlineChip: ThemedStyle<ViewStyle> = ({ colors }) => ({
+  backgroundColor: colors.palette.accent,
+  borderWidth: 2,
+  borderColor: colors.border,
+  paddingHorizontal: 8,
+  paddingVertical: 4,
+  borderRadius: 0,
+  marginLeft: 12,
+})
+
+const $offlineChipText: TextStyle = {
+  color: "#FFFFFF",
+  letterSpacing: 1.5,
+  textTransform: "uppercase",
+}
 
 const $searchBarOuter: ThemedStyle<ViewStyle> = ({ spacing }) => ({
   paddingHorizontal: spacing.md,

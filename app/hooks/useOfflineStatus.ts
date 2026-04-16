@@ -1,16 +1,22 @@
 import { useEffect, useState } from "react"
-import NetInfo from "@react-native-community/netinfo"
+import NetInfo, { NetInfoState } from "@react-native-community/netinfo"
+
+function deriveOffline(state: NetInfoState): boolean {
+  if (!state.isConnected) return true
+  if (state.isInternetReachable === false) return true
+  return false
+}
 
 export function useOfflineStatus(): boolean {
   const [isOffline, setIsOffline] = useState(false)
 
   useEffect(() => {
     NetInfo.fetch().then((state) => {
-      setIsOffline(!state.isConnected || !state.isInternetReachable)
+      setIsOffline(deriveOffline(state))
     })
 
     const unsubscribe = NetInfo.addEventListener((state) => {
-      setIsOffline(!state.isConnected || !state.isInternetReachable)
+      setIsOffline(deriveOffline(state))
     })
 
     return unsubscribe

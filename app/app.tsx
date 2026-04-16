@@ -1,15 +1,4 @@
 /* eslint-disable import/first */
-/**
- * Welcome to the main entry point of the app. In this file, we'll
- * be kicking off our app.
- *
- * Most of this file is boilerplate and you shouldn't need to modify
- * it very often. But take some time to look through and understand
- * what is going on here.
- *
- * The app navigation resides in ./app/navigators, so head over there
- * if you're interested in adding screens and navigators.
- */
 if (__DEV__) {
   // Load Reactotron in development only.
   // Note that you must be using metro's `inlineRequires` for this to work.
@@ -17,6 +6,11 @@ if (__DEV__) {
   require("./devtools/ReactotronConfig.ts")
 }
 import "./utils/gestureHandler"
+import NetInfo from "@react-native-community/netinfo"
+
+NetInfo.configure({
+  useNativeReachability: false,
+})
 
 import { useEffect, useState } from "react"
 import { useFonts } from "expo-font"
@@ -45,11 +39,6 @@ const config = {
   },
 }
 
-/**
- * This is the root component of our app.
- * @param {AppProps} props - The props for the `App` component.
- * @returns {JSX.Element} The rendered `App` component.
- */
 export function App() {
   const {
     initialNavigationState,
@@ -67,9 +56,6 @@ export function App() {
       .then(() => loadDateFnsLocale())
   }, [])
 
-  // Before we show the app, we have to wait for our state to be ready.
-  // In the meantime, don't render anything. This will be the background
-  // color set in native by rootView's background color.
   if (!isNavigationStateRestored || !isI18nInitialized || (!areFontsLoaded && !fontLoadError)) {
     return null
   }
@@ -79,7 +65,6 @@ export function App() {
     config,
   }
 
-  // otherwise, we're ready to render the app
   return (
     <SafeAreaProvider initialMetrics={initialWindowMetrics}>
       <KeyboardProvider>
