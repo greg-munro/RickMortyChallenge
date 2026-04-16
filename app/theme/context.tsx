@@ -1,6 +1,5 @@
 import {
   createContext,
-  FC,
   PropsWithChildren,
   useContext,
   useEffect,
@@ -46,10 +45,10 @@ export interface ThemeProviderProps {
  *
  * Wrap your app in `ThemeProvider` and consume the theme with `useAppTheme()`.
  */
-export const ThemeProvider: FC<PropsWithChildren<ThemeProviderProps>> = ({
+export function ThemeProvider({
   children,
   initialContext,
-}) => {
+}: PropsWithChildren<ThemeProviderProps>) {
   // The operating system theme:
   const systemColorScheme = useColorScheme()
   // Our saved theme context: can be "light", "dark", or undefined (system theme)

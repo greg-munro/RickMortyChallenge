@@ -1,4 +1,4 @@
-import { FC, useEffect, useState } from "react"
+import { useEffect, useState } from "react"
 import {
   FlatList,
   ListRenderItemInfo,
@@ -31,7 +31,7 @@ import { STATUS_ORDER } from "@/utils/characterUtils"
 
 interface EpisodeDetailScreenProps extends AppStackScreenProps<"EpisodeDetail"> {}
 
-export const EpisodeDetailScreen: FC<EpisodeDetailScreenProps> = ({ navigation, route }) => {
+export function EpisodeDetailScreen({ navigation, route }: EpisodeDetailScreenProps) {
   const { episodeId } = route.params
   const {
     episodes,

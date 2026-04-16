@@ -1,6 +1,5 @@
 import {
   createContext,
-  FC,
   PropsWithChildren,
   useContext,
   useEffect,
@@ -48,7 +47,7 @@ export const useRickMorty = (): RickMortyContextType => {
 }
 
 
-export const RickMortyProvider: FC<PropsWithChildren> = ({ children }) => {
+export function RickMortyProvider({ children }: PropsWithChildren) {
   const [episodes, setEpisodes] = useState<RickMortyEpisode[]>([])
   const [episodesLoading, setEpisodesLoading] = useState(false)
   const [episodesError, setEpisodesError] = useState<string | null>(null)

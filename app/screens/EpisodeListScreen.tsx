@@ -1,4 +1,4 @@
-import { FC, useEffect, useRef, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import NetInfo from "@react-native-community/netinfo"
 import Animated, {
   useAnimatedStyle,
@@ -35,7 +35,7 @@ import { Screen } from "@/components/Screen"
 
 interface EpisodeListScreenProps extends AppStackScreenProps<"EpisodeList"> {}
 
-export const EpisodeListScreen: FC<EpisodeListScreenProps> = ({ navigation }) => {
+export function EpisodeListScreen({ navigation }: EpisodeListScreenProps) {
   const { episodes, episodesLoading, episodesError, fetchEpisodes } = useRickMorty()
   const { themed, theme } = useAppTheme()
   const isOffline = useOfflineStatus()
