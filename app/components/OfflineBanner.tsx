@@ -4,39 +4,49 @@ import Animated, {
   useAnimatedStyle,
   useSharedValue,
   withSpring,
+  withSequence,
+  withTiming,
 } from "react-native-reanimated"
-import NetInfo from "@react-native-community/netinfo"
 
 import { useAppTheme } from "@/theme/context"
 import type { ThemedStyle } from "@/theme/types"
 import { Text } from "./Text"
 
-/**
- * Neo-brutalist offline banner.
- * Slides down from above when the device loses internet connectivity.
- * Slides back up and disappears when connectivity is restored.
- * Uses @react-native-community/netinfo to subscribe to connectivity changes.
- */
-export function OfflineBanner() {
+interface OfflineBannerProps {
+  isOffline: boolean
+  pulseRef?: React.MutableRefObject<(() => void) | null>
+}
+
+export function OfflineBanner({ isOffline, pulseRef }: OfflineBannerProps) {
   const { themed } = useAppTheme()
 
   const translateY = useSharedValue(-60)
+  const translateX = useSharedValue(0)
 
   const animStyle = useAnimatedStyle(() => ({
-    transform: [{ translateY: translateY.value }],
+    transform: [{ translateY: translateY.value }, { translateX: translateX.value }],
   }))
 
   useEffect(() => {
-    const unsubscribe = NetInfo.addEventListener((state) => {
-      const isOffline = !state.isConnected || !state.isInternetReachable
-      translateY.value = withSpring(isOffline ? 0 : -60, {
-        damping: 18,
-        stiffness: 220,
-        mass: 0.7,
-      })
+    translateY.value = withSpring(isOffline ? 0 : -60, {
+      damping: 18,
+      stiffness: 220,
+      mass: 0.7,
     })
+  }, [isOffline])
 
-    return unsubscribe
+  useEffect(() => {
+    if (pulseRef) {
+      pulseRef.current = () => {
+        translateX.value = withSequence(
+          withTiming(-6, { duration: 40 }),
+          withTiming(6, { duration: 40 }),
+          withTiming(-4, { duration: 40 }),
+          withTiming(4, { duration: 40 }),
+          withTiming(0, { duration: 40 }),
+        )
+      }
+    }
   }, [])
 
   return (

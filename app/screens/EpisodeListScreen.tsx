@@ -1,4 +1,5 @@
 import { FC, useCallback, useMemo, useRef, useState } from "react"
+import NetInfo from "@react-native-community/netinfo"
 import {
   RefreshControl,
   SectionList,
@@ -17,6 +18,7 @@ import type { RickMortyEpisode } from "@/services/api/types"
 import { useAppTheme } from "@/theme/context"
 import type { ThemedStyle } from "@/theme/types"
 import { groupEpisodesBySeason, EpisodeSection } from "@/utils/episodeUtils"
+import { useOfflineStatus } from "@/hooks/useOfflineStatus"
 import { EpisodeListItem } from "@/components/EpisodeListItem"
 import { SectionHeader } from "@/components/SectionHeader"
 import { SkeletonLoader } from "@/components/SkeletonLoader"
@@ -30,6 +32,8 @@ interface EpisodeListScreenProps extends AppStackScreenProps<"EpisodeList"> {}
 export const EpisodeListScreen: FC<EpisodeListScreenProps> = ({ navigation }) => {
   const { episodes, episodesLoading, episodesError, fetchEpisodes } = useRickMorty()
   const { themed, theme } = useAppTheme()
+  const isOffline = useOfflineStatus()
+  const pulseRef = useRef<(() => void) | null>(null)
 
   // ── Search state ─────────────────────────────────────────────────────────
   const [searchQuery, setSearchQuery] = useState("")
@@ -49,6 +53,18 @@ export const EpisodeListScreen: FC<EpisodeListScreenProps> = ({ navigation }) =>
     setDebouncedQuery("")
     if (debounceTimer.current) clearTimeout(debounceTimer.current)
   }, [])
+
+  const handleRefresh = useCallback(async () => {
+    if (isOffline) {
+      const state = await NetInfo.fetch()
+      const stillOffline = !state.isConnected || !state.isInternetReachable
+      if (stillOffline) {
+        pulseRef.current?.()
+        return
+      }
+    }
+    fetchEpisodes(true)
+  }, [isOffline, fetchEpisodes])
 
   // ── Filtered + grouped data ───────────────────────────────────────────────
   const sections = useMemo<SectionListData<RickMortyEpisode, EpisodeSection>[]>(() => {
@@ -133,7 +149,7 @@ export const EpisodeListScreen: FC<EpisodeListScreenProps> = ({ navigation }) =>
   return (
     <Screen preset="fixed" safeAreaEdges={["top"]} style={themed($screen)} contentContainerStyle={$flex}>
       {/* Offline banner — absolutely positioned, slides down when no connection */}
-      <OfflineBanner />
+      <OfflineBanner isOffline={isOffline} pulseRef={pulseRef} />
 
       {/* Header — thick bottom border, black on cream */}
       <View style={themed($header)}>
@@ -190,8 +206,8 @@ export const EpisodeListScreen: FC<EpisodeListScreenProps> = ({ navigation }) =>
           keyboardDismissMode="on-drag"
           refreshControl={
             <RefreshControl
-              refreshing={episodesLoading}
-              onRefresh={() => fetchEpisodes(true)}
+              refreshing={episodesLoading && !isOffline}
+              onRefresh={handleRefresh}
               tintColor="#FF6B6B"
               colors={["#FF6B6B"]}
             />
