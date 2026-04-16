@@ -81,7 +81,7 @@ export function EpisodeDetailScreen({ navigation, route }: EpisodeDetailScreenPr
 
   useEffect(() => {
     if (episode) fetchCharactersForEpisode(episode)
-  }, [episode, fetchCharactersForEpisode])
+  }, [episodeId])
 
   const statusCounts = new Map<CharacterStatus, number>()
   for (const c of characters) {

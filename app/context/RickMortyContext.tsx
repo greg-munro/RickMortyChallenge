@@ -106,8 +106,8 @@ export function RickMortyProvider({ children }: PropsWithChildren) {
   const fetchCharactersForEpisode = async (episode: RickMortyEpisode) => {
       const epId = episode.id
 
-      // Already loaded in-memory — skip
-      if (charactersByEpisode[epId]) return
+      // Already loaded in-memory or currently fetching — skip
+      if (charactersByEpisode[epId] || charactersLoading[epId]) return
 
       // Check persistent MMKV cache (character data is immutable, no TTL needed)
       const cachedChars = load<RickMortyCharacter[]>(characterCacheKey(epId))
