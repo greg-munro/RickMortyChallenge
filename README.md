@@ -1,5 +1,8 @@
 
 
+## Development
+See [/docs/skill.md](/docs/skill.md) for coding standards
+
 ## Demos
 
 ### Loading
