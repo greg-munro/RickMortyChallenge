@@ -1,4 +1,3 @@
-import { ReactNode } from "react"
 import { StyleProp, TextStyle, ViewStyle } from "react-native"
 import Animated, {
   useAnimatedStyle,
@@ -20,19 +19,6 @@ interface NeoButtonProps {
   style?: StyleProp<ViewStyle>
   labelStyle?: StyleProp<TextStyle>
   disabled?: boolean
-  children?: ReactNode
-}
-
-const VARIANT_BG: Record<NeoButtonVariant, string> = {
-  primary: "#FF6B6B",
-  secondary: "#FFD93D",
-  outline: "#FFFFFF",
-}
-
-const VARIANT_TEXT_COLOR: Record<NeoButtonVariant, string> = {
-  primary: "#000000",
-  secondary: "#000000",
-  outline: "#000000",
 }
 
 /**
@@ -52,6 +38,17 @@ export function NeoButton({
 }: NeoButtonProps) {
   const { theme } = useAppTheme()
   const OFFSET = { sm: 4, md: 6, lg: 8 }[shadowSize]
+
+  const VARIANT_BG: Record<NeoButtonVariant, string> = {
+    primary: theme.colors.palette.accent,
+    secondary: theme.colors.palette.secondary,
+    outline: theme.colors.palette.white,
+  }
+  const VARIANT_TEXT_COLOR: Record<NeoButtonVariant, string> = {
+    primary: theme.colors.palette.ink,
+    secondary: theme.colors.palette.ink,
+    outline: theme.colors.palette.ink,
+  }
 
   const pressed = useSharedValue(0)
 

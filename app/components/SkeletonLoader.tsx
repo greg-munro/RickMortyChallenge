@@ -1,5 +1,11 @@
-import { useEffect, useRef } from "react"
-import { Animated, StyleProp, ViewStyle } from "react-native"
+import { StyleProp, ViewStyle } from "react-native"
+import Animated, {
+  useAnimatedStyle,
+  useSharedValue,
+  withRepeat,
+  withSequence,
+  withTiming,
+} from "react-native-reanimated"
 
 import { useAppTheme } from "@/theme/context"
 import type { ThemedStyle } from "@/theme/types"
@@ -24,30 +30,22 @@ export function SkeletonLoader({
   style,
 }: SkeletonLoaderProps) {
   const { themed } = useAppTheme()
-  const opacity = useRef(new Animated.Value(0.15)).current
+  const opacity = useSharedValue(0.15)
 
-  useEffect(() => {
-    const pulse = Animated.loop(
-      Animated.sequence([
-        Animated.timing(opacity, {
-          toValue: 0.45,
-          duration: 600,
-          useNativeDriver: true,
-        }),
-        Animated.timing(opacity, {
-          toValue: 0.15,
-          duration: 600,
-          useNativeDriver: true,
-        }),
-      ]),
-    )
-    pulse.start()
-    return () => pulse.stop()
-  }, [opacity])
+  opacity.value = withRepeat(
+    withSequence(
+      withTiming(0.45, { duration: 600 }),
+      withTiming(0.15, { duration: 600 }),
+    ),
+    -1,
+    false,
+  )
+
+  const animStyle = useAnimatedStyle(() => ({ opacity: opacity.value }))
 
   return (
     <Animated.View
-      style={[themed($skeleton), { width, height, borderRadius, opacity }, style]}
+      style={[themed($skeleton), { width, height, borderRadius }, animStyle, style]}
     />
   )
 }

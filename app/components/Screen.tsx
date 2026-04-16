@@ -17,7 +17,7 @@ import {
 } from "react-native-keyboard-controller"
 
 import { useAppTheme } from "@/theme/context"
-import { ExtendedEdge, useSafeAreaInsetsStyle } from "@/utils/useSafeAreaInsetsStyle"
+import { ExtendedEdge, useSafeAreaInsetsStyle } from "@/hooks/useSafeAreaInsetsStyle"
 
 export const DEFAULT_BOTTOM_OFFSET = 50
 

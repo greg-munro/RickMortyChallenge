@@ -1,8 +1,5 @@
 import { useEffect, useRef } from "react"
-/**
- * A common react custom hook to check if the component is mounted.
- * @returns {() => boolean} - A function that returns true if the component is mounted.
- */
+
 export function useIsMounted() {
   const isMounted = useRef(false)
 

@@ -59,7 +59,7 @@ const $badge: ThemedStyle<ViewStyle> = ({ colors, spacing }) => ({
   paddingVertical: 2,
 })
 
-const $badgeText: ThemedStyle<TextStyle> = () => ({
-  color: "#FFFFFF",
+const $badgeText: ThemedStyle<TextStyle> = ({ colors }) => ({
+  color: colors.palette.white,
   letterSpacing: 1,
 })

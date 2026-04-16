@@ -18,6 +18,7 @@ import * as Linking from "expo-linking"
 import { KeyboardProvider } from "react-native-keyboard-controller"
 import { initialWindowMetrics, SafeAreaProvider } from "react-native-safe-area-context"
 
+import i18n from "i18next"
 import { RickMortyProvider } from "./context/RickMortyContext"
 import { initI18n } from "./i18n"
 import { AppNavigator } from "./navigators/AppNavigator"
@@ -25,8 +26,34 @@ import { useNavigationPersistence } from "./navigators/navigationUtilities"
 import { SplashScreen } from "./components/SplashScreen"
 import { ThemeProvider } from "./theme/context"
 import { customFontsToLoad } from "./theme/typography"
-import { loadDateFnsLocale } from "./utils/formatDate"
 import * as storage from "./utils/storage"
+
+function loadDateFnsLocale() {
+  const primaryTag = i18n.language.split("-")[0]
+  switch (primaryTag) {
+    case "ar":
+      require("date-fns/locale/ar")
+      break
+    case "ko":
+      require("date-fns/locale/ko")
+      break
+    case "es":
+      require("date-fns/locale/es")
+      break
+    case "fr":
+      require("date-fns/locale/fr")
+      break
+    case "hi":
+      require("date-fns/locale/hi")
+      break
+    case "ja":
+      require("date-fns/locale/ja")
+      break
+    default:
+      require("date-fns/locale/en-US")
+      break
+  }
+}
 
 export const NAVIGATION_PERSISTENCE_KEY = "NAVIGATION_STATE"
 

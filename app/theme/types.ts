@@ -3,7 +3,6 @@ import type { StyleProp } from "react-native"
 import { colors as colorsLight } from "./colors"
 import { colors as colorsDark } from "./colorsDark"
 import { spacing } from "./spacing"
-import { timing } from "./timing"
 import { typography } from "./typography"
 
 // This supports "light" and "dark" themes by default. If undefined, it'll use the system theme
@@ -15,8 +14,6 @@ export type ThemeContextModeT = ImmutableThemeContextModeT | undefined
 export type Colors = typeof colorsLight | typeof colorsDark
 export type Spacing = typeof spacing
 
-// These two are consistent across themes.
-export type Timing = typeof timing
 export type Typography = typeof typography
 
 // The overall Theme object should contain all of the data you need to style your app.
@@ -24,7 +21,6 @@ export interface Theme {
   colors: Colors
   spacing: Spacing
   typography: Typography
-  timing: Timing
   isDark: boolean
 }
 

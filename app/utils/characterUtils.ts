@@ -11,3 +11,9 @@ export const STATUS_LABELS: Record<CharacterStatus, string> = {
   Dead: "Dead",
   unknown: "Unknown",
 }
+
+export const STATUS_ORDER: Record<CharacterStatus, number> = {
+  Alive: 0,
+  Dead: 1,
+  unknown: 2,
+}

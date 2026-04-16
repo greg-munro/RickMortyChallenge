@@ -27,6 +27,7 @@ import { ErrorDisplay } from "@/components/ErrorDisplay"
 import { StatusFilterChip } from "@/components/StatusFilterChip"
 import { Text } from "@/components/Text"
 import { Screen } from "@/components/Screen"
+import { STATUS_ORDER } from "@/utils/characterUtils"
 
 interface EpisodeDetailScreenProps extends AppStackScreenProps<"EpisodeDetail"> {}
 
@@ -79,13 +80,10 @@ export const EpisodeDetailScreen: FC<EpisodeDetailScreenProps> = ({ navigation, 
     if (episode) fetchCharactersForEpisode(episode)
   }, [episode, fetchCharactersForEpisode])
 
-  const statusCounts = (() => {
-    const counts = new Map<CharacterStatus, number>()
-    for (const c of characters) {
-      counts.set(c.status, (counts.get(c.status) ?? 0) + 1)
-    }
-    return counts
-  })()
+  const statusCounts = new Map<CharacterStatus, number>()
+  for (const c of characters) {
+    statusCounts.set(c.status, (statusCounts.get(c.status) ?? 0) + 1)
+  }
 
   const availableStatuses = (["Alive", "Dead", "unknown"] as CharacterStatus[]).filter((s) =>
     statusCounts.has(s),
@@ -99,13 +97,12 @@ export const EpisodeDetailScreen: FC<EpisodeDetailScreenProps> = ({ navigation, 
     }
   }, [availableStatuses.length])
 
-  const filteredCharacters = (() => {
-    const STATUS_ORDER: Record<CharacterStatus, number> = { Alive: 0, Dead: 1, unknown: 2 }
-    if (activeFilters.size === 0) return characters
-    return characters
-      .filter((c) => activeFilters.has(c.status))
-      .sort((a, b) => (STATUS_ORDER[a.status] ?? 3) - (STATUS_ORDER[b.status] ?? 3))
-  })()
+  const filteredCharacters =
+    activeFilters.size === 0
+      ? characters
+      : characters
+          .filter((c) => activeFilters.has(c.status))
+          .sort((a, b) => (STATUS_ORDER[a.status] ?? 3) - (STATUS_ORDER[b.status] ?? 3))
 
   const renderCharacter = ({ item, index }: ListRenderItemInfo<RickMortyCharacter>) => (
     <CharacterCard character={item} index={index} />
@@ -132,72 +129,69 @@ export const EpisodeDetailScreen: FC<EpisodeDetailScreenProps> = ({ navigation, 
     </View>
   )
 
-  const ListHeader = (() => {
-    if (!episode) return null
-    return (
-      <View style={themed($listHeaderContainer)}>
-        <View style={themed($episodeCodeBadge)}>
-          <Text text={episode.episode} size="sm" weight="bold" style={themed($episodeCodeText)} />
-        </View>
-
-        <Text
-          text={episode.name.toUpperCase()}
-          weight="bold"
-          style={themed($episodeTitle)}
-          numberOfLines={3}
-        />
-
-        <View style={themed($metaRow)}>
-          <Text text="◉" style={themed($metaIcon)} />
-          <Text text={episode.air_date} size="sm" weight="bold" style={themed($metaText)} />
-        </View>
-
-        <View style={themed($metaRow)}>
-          <Text text="👤" style={themed($metaIcon)} />
-          <Text
-            text={`${episode.characters.length} CHARACTER${episode.characters.length !== 1 ? "S" : ""}`}
-            size="sm"
-            weight="bold"
-            style={themed($metaText)}
-          />
-        </View>
-
-        <View style={themed($divider)} />
-
-        <Text tx="episodeDetailScreen:characters" weight="bold" style={themed($sectionTitle)} />
-
-        {!isLoading && !error && availableStatuses.length > 0 && (
-          <Animated.View style={chipRowAnimStyle}>
-            <ScrollView
-              horizontal
-              showsHorizontalScrollIndicator={false}
-              contentContainerStyle={themed($chipsRow)}
-              style={themed($chipsScroll)}
-            >
-              {availableStatuses.map((status) => (
-                <StatusFilterChip
-                  key={status}
-                  status={status}
-                  count={statusCounts.get(status) ?? 0}
-                  isSelected={activeFilters.has(status)}
-                  onPress={() => toggleFilter(status)}
-                />
-              ))}
-            </ScrollView>
-          </Animated.View>
-        )}
-
-        {isLoading && renderCharacterSkeletons()}
-        {!isLoading && error && (
-          <ErrorDisplay
-            heading="Couldn't load characters"
-            message={error}
-            onAction={() => fetchCharactersForEpisode(episode)}
-          />
-        )}
+  const ListHeader = !episode ? null : (
+    <View style={themed($listHeaderContainer)}>
+      <View style={themed($episodeCodeBadge)}>
+        <Text text={episode.episode} size="sm" weight="bold" style={themed($episodeCodeText)} />
       </View>
-    )
-  })()
+
+      <Text
+        text={episode.name.toUpperCase()}
+        weight="bold"
+        style={themed($episodeTitle)}
+        numberOfLines={3}
+      />
+
+      <View style={themed($metaRow)}>
+        <Text text="◉" style={themed($metaIcon)} />
+        <Text text={episode.air_date} size="sm" weight="bold" style={themed($metaText)} />
+      </View>
+
+      <View style={themed($metaRow)}>
+        <Text text="👤" style={themed($metaIcon)} />
+        <Text
+          text={`${episode.characters.length} CHARACTER${episode.characters.length !== 1 ? "S" : ""}`}
+          size="sm"
+          weight="bold"
+          style={themed($metaText)}
+        />
+      </View>
+
+      <View style={themed($divider)} />
+
+      <Text tx="episodeDetailScreen:characters" weight="bold" style={themed($sectionTitle)} />
+
+      {!isLoading && !error && availableStatuses.length > 0 && (
+        <Animated.View style={chipRowAnimStyle}>
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={themed($chipsRow)}
+            style={themed($chipsScroll)}
+          >
+            {availableStatuses.map((status) => (
+              <StatusFilterChip
+                key={status}
+                status={status}
+                count={statusCounts.get(status) ?? 0}
+                isSelected={activeFilters.has(status)}
+                onPress={() => toggleFilter(status)}
+              />
+            ))}
+          </ScrollView>
+        </Animated.View>
+      )}
+
+      {isLoading && renderCharacterSkeletons()}
+      {!isLoading && error && (
+        <ErrorDisplay
+          heading="Couldn't load characters"
+          message={error}
+          onAction={() => fetchCharactersForEpisode(episode)}
+        />
+      )}
+    </View>
+  )
 
   if (!episode) {
     return (

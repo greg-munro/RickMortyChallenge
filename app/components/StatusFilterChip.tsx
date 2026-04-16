@@ -72,19 +72,19 @@ export function StatusFilterChip({ status, count, isSelected, onPress }: StatusF
           text={label.toUpperCase()}
           size="xs"
           weight="bold"
-          style={[themed($label), isSelected && ($labelSelected as TextStyle)]}
+          style={[themed($label), isSelected && themed($labelSelected)]}
         />
         <View style={[
-          $countBadge,
-          isSelected && { backgroundColor: "#FFFFFF" },
+          themed($countBadge),
+          isSelected && { backgroundColor: theme.colors.palette.white },
         ]}>
           <Text
             text={String(count)}
             size="xs"
             weight="bold"
             style={[
-              $countText,
-              isSelected && { color: "#000000" },
+              themed($countText),
+              isSelected && { color: theme.colors.palette.ink },
             ]}
           />
         </View>
@@ -107,22 +107,22 @@ const $label: ThemedStyle<TextStyle> = ({ colors }) => ({
   letterSpacing: 1,
 })
 
-const $labelSelected: TextStyle = {
-  color: "#000000",
-}
+const $labelSelected: ThemedStyle<TextStyle> = ({ colors }) => ({
+  color: colors.palette.ink,
+})
 
-const $countBadge: ViewStyle = {
-  backgroundColor: "#000000",
+const $countBadge: ThemedStyle<ViewStyle> = ({ colors }) => ({
+  backgroundColor: colors.palette.ink,
   paddingHorizontal: 5,
   paddingVertical: 1,
   minWidth: 20,
   alignItems: "center",
-}
+})
 
-const $countText: TextStyle = {
-  color: "#FFFFFF",
+const $countText: ThemedStyle<TextStyle> = ({ colors }) => ({
+  color: colors.palette.white,
   fontSize: 10,
   lineHeight: 14,
   fontWeight: "700",
   letterSpacing: 0.5,
-}
+})

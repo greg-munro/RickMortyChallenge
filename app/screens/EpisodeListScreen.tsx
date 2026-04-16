@@ -97,16 +97,14 @@ export const EpisodeListScreen: FC<EpisodeListScreenProps> = ({ navigation }) =>
     fetchEpisodes(true)
   }
 
-  const sections: SectionListData<RickMortyEpisode, EpisodeSection>[] = (() => {
-    const filtered = debouncedQuery
-      ? episodes.filter(
-          (ep) =>
-            ep.name.toLowerCase().includes(debouncedQuery) ||
-            ep.episode.toLowerCase().includes(debouncedQuery),
-        )
-      : episodes
-    return groupEpisodesBySeason(filtered)
-  })()
+  const filtered = debouncedQuery
+    ? episodes.filter(
+        (ep) =>
+          ep.name.toLowerCase().includes(debouncedQuery) ||
+          ep.episode.toLowerCase().includes(debouncedQuery),
+      )
+    : episodes
+  const sections: SectionListData<RickMortyEpisode, EpisodeSection>[] = groupEpisodesBySeason(filtered)
 
   const handleEpisodePress = (episode: RickMortyEpisode) => {
       navigation.navigate("EpisodeDetail", { episodeId: episode.id })
@@ -147,9 +145,9 @@ export const EpisodeListScreen: FC<EpisodeListScreenProps> = ({ navigation }) =>
     />
   )
 
-  const ListEmptyComponent = (() => {
-    if (episodesLoading || episodes.length === 0) return null
-    return (
+  let ListEmptyComponent = null
+  if (!episodesLoading && episodes.length > 0) {
+    ListEmptyComponent = (
       <View style={themed($emptySearch)}>
         <Text
           text={`NO RESULTS FOR "${searchQuery.toUpperCase()}"`}
@@ -159,7 +157,7 @@ export const EpisodeListScreen: FC<EpisodeListScreenProps> = ({ navigation }) =>
         />
       </View>
     )
-  })()
+  }
 
   return (
     <Screen preset="fixed" safeAreaEdges={["top"]} style={themed($screen)} contentContainerStyle={$flex}>
@@ -174,7 +172,7 @@ export const EpisodeListScreen: FC<EpisodeListScreenProps> = ({ navigation }) =>
             <View style={themed($headerUnderline)} />
           </View>
           <Animated.View style={[themed($offlineChip), chipAnimStyle]} pointerEvents="none">
-            <Text text="OFFLINE" size="xs" weight="bold" style={$offlineChipText} />
+            <Text text="OFFLINE" size="xs" weight="bold" style={themed($offlineChipText)} />
           </Animated.View>
         </View>
       </View>
@@ -223,8 +221,8 @@ export const EpisodeListScreen: FC<EpisodeListScreenProps> = ({ navigation }) =>
             <RefreshControl
               refreshing={episodesLoading && !isOffline}
               onRefresh={handleRefresh}
-              tintColor="#FF6B6B"
-              colors={["#FF6B6B"]}
+              tintColor={theme.colors.tint}
+              colors={[theme.colors.tint]}
             />
           }
         />
@@ -283,11 +281,11 @@ const $offlineChip: ThemedStyle<ViewStyle> = ({ colors }) => ({
   marginLeft: 12,
 })
 
-const $offlineChipText: TextStyle = {
-  color: "#FFFFFF",
+const $offlineChipText: ThemedStyle<TextStyle> = ({ colors }) => ({
+  color: colors.palette.white,
   letterSpacing: 1.5,
   textTransform: "uppercase",
-}
+})
 
 const $searchBarOuter: ThemedStyle<ViewStyle> = ({ spacing }) => ({
   paddingHorizontal: spacing.md,

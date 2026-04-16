@@ -9,7 +9,7 @@ import {
 import Config from "@/config"
 import type { PersistNavigationConfig } from "@/config/config.base"
 import * as storage from "@/utils/storage"
-import { useIsMounted } from "@/utils/useIsMounted"
+import { useIsMounted } from "@/hooks/useIsMounted"
 
 import type { AppStackParamList, NavigationProps } from "./navigationTypes"
 
