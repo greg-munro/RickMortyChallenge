@@ -1,28 +1,3 @@
-// react-native must be imported first — required by jest-expo
-// eslint-disable-next-line no-restricted-imports
-import * as ReactNative from "react-native"
-
-import mockFile from "./mockFile"
-
-jest.doMock("react-native", () => {
-  return Object.setPrototypeOf(
-    {
-      Image: {
-        ...ReactNative.Image,
-        resolveAssetSource: jest.fn((_source) => mockFile),
-        getSize: jest.fn(
-          (
-            uri: string,
-            success: (width: number, height: number) => void,
-            failure?: (_error: any) => void,
-          ) => success(100, 100),
-        ),
-      },
-    },
-    ReactNative,
-  )
-})
-
 jest.mock("i18next", () => ({
   currentLocale: "en",
   t: (key: string, params: Record<string, string>) => {
@@ -77,10 +52,3 @@ jest.mock("react-native-mmkv", () => {
     useMMKVString: jest.fn(() => [undefined, jest.fn()]),
   }
 })
-
-// eslint-disable-next-line @typescript-eslint/no-unused-vars -- Reactotron attaches to global `tron` in dev
-declare const tron
-
-declare global {
-  let __TEST__: boolean
-}
