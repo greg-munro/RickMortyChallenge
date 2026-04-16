@@ -19,7 +19,7 @@ export function SectionHeader({ title, episodeCount }: SectionHeaderProps) {
 
   return (
     <View style={themed($container)}>
-      <Text text={title.toUpperCase()} weight="bold" style={themed($title)} />
+      <Text text={title.toUpperCase()} size="xs" weight="bold" style={themed($title)} />
       <View style={themed($badge)}>
         <Text
           text={`${episodeCount} EP${episodeCount !== 1 ? "S" : ""}`}
@@ -46,7 +46,6 @@ const $container: ThemedStyle<ViewStyle> = ({ colors, spacing }) => ({
 
 const $title: ThemedStyle<TextStyle> = ({ colors }) => ({
   color: colors.palette.white,
-  fontSize: 13,
   letterSpacing: 2,
   textTransform: "uppercase",
 })

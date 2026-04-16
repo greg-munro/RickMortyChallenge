@@ -121,8 +121,8 @@ const $countBadge: ThemedStyle<ViewStyle> = ({ colors }) => ({
 
 const $countText: ThemedStyle<TextStyle> = ({ colors }) => ({
   color: colors.palette.white,
-  fontSize: 10,
-  lineHeight: 14,
+  fontSize: 12,
+  lineHeight: 18,
   fontWeight: "700",
   letterSpacing: 0.5,
 })

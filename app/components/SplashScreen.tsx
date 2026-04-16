@@ -1,5 +1,5 @@
 import { useEffect } from "react"
-import { Dimensions, Image, ImageStyle, StyleSheet, TextStyle, View, ViewStyle } from "react-native"
+import { Image, StyleSheet, TextStyle, useWindowDimensions, View, ViewStyle } from "react-native"
 import Animated, {
   runOnJS,
   useAnimatedStyle,
@@ -14,8 +14,6 @@ import Animated, {
 import { Text } from "@/components/Text"
 import { useAppTheme } from "@/theme/context"
 import type { ThemedStyle } from "@/theme/types"
-
-const { height: SCREEN_HEIGHT } = Dimensions.get("window")
 
 interface SplashScreenProps {
   onFinish: () => void
@@ -35,6 +33,10 @@ interface SplashScreenProps {
  */
 export function SplashScreen({ onFinish }: SplashScreenProps) {
   const { themed } = useAppTheme()
+  const { height: screenHeight, width: screenWidth } = useWindowDimensions()
+  const gifSize = Math.round(screenWidth * 0.65)
+  const headlineFontSize = screenWidth < 380 ? 38 : 48
+  const headlineLineHeight = screenWidth < 380 ? 42 : 52
 
   const stripeWidth = useSharedValue(0)
 
@@ -87,8 +89,8 @@ export function SplashScreen({ onFinish }: SplashScreenProps) {
     // 5. Exit — slam down
     const exitDelay = setTimeout(() => {
       exitOpacity.value = withTiming(0, { duration: 300 })
-      exitY.value = withTiming(
-        SCREEN_HEIGHT,
+        exitY.value = withTiming(
+        screenHeight,
         { duration: 420, easing: Easing.in(Easing.cubic) },
         (finished) => {
           if (finished) runOnJS(onFinish)()
@@ -137,16 +139,16 @@ export function SplashScreen({ onFinish }: SplashScreenProps) {
       <View style={themed($content)}>
         {/* Headline box — slams down */}
         <Animated.View style={[$headlineAnimStyle, themed($headlineBox)]}>
-          <Text text="RICK &" weight="bold" style={themed($headline)} />
-          <Text text="MORTY" weight="bold" style={themed($headline)} />
-          <Text text="CATALOG" weight="bold" style={themed($headlineAccent)} />
+          <Text text="RICK &" weight="bold" style={[themed($headline), { fontSize: headlineFontSize, lineHeight: headlineLineHeight }]} />
+          <Text text="MORTY" weight="bold" style={[themed($headline), { fontSize: headlineFontSize, lineHeight: headlineLineHeight }]} />
+          <Text text="CATALOG" weight="bold" style={[themed($headlineAccent), { fontSize: headlineFontSize, lineHeight: headlineLineHeight }]} />
         </Animated.View>
 
         {/* GIF — scales up */}
         <Animated.View style={$gifAnimStyle}>
           <Image
             source={require("../../assets/images/splash.gif")}
-            style={$gif}
+            style={{ width: gifSize, height: gifSize }}
             resizeMode="contain"
           />
         </Animated.View>
@@ -227,8 +229,6 @@ const $headlineBox: ThemedStyle<ViewStyle> = ({ colors, spacing }) => ({
 const $headline: ThemedStyle<TextStyle> = ({ colors, typography }) => ({
   color: colors.text,
   fontFamily: typography.primary.black,
-  fontSize: 48,
-  lineHeight: 52,
   letterSpacing: -1,
   textTransform: "uppercase",
 })
@@ -236,8 +236,6 @@ const $headline: ThemedStyle<TextStyle> = ({ colors, typography }) => ({
 const $headlineAccent: ThemedStyle<TextStyle> = ({ colors, typography }) => ({
   color: colors.palette.accent,
   fontFamily: typography.primary.black,
-  fontSize: 48,
-  lineHeight: 52,
   letterSpacing: -1,
   textTransform: "uppercase",
   borderTopWidth: 3,
@@ -252,7 +250,3 @@ const $tagline: ThemedStyle<TextStyle> = ({ colors }) => ({
   textTransform: "uppercase",
 })
 
-const $gif: ImageStyle = {
-  width: 260,
-  height: 260,
-}

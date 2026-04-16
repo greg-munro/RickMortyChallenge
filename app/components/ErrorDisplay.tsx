@@ -63,7 +63,6 @@ const $outer: ThemedStyle<ViewStyle> = ({ spacing }) => ({
   alignItems: "center",
   justifyContent: "center",
   padding: spacing.xl,
-  paddingBottom: spacing.xl * 6,
 })
 
 const $shadowWrapper: ThemedStyle<ViewStyle> = () => ({

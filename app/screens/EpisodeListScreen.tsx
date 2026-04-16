@@ -15,6 +15,7 @@ import {
   TextInput,
   TextStyle,
   TouchableOpacity,
+  useWindowDimensions,
   View,
   ViewStyle,
 } from "react-native"
@@ -39,6 +40,7 @@ export function EpisodeListScreen({ navigation }: EpisodeListScreenProps) {
   const { episodes, episodesLoading, episodesError, fetchEpisodes } = useRickMorty()
   const { themed, theme } = useAppTheme()
   const isOffline = useOfflineStatus()
+  const { width: windowWidth } = useWindowDimensions()
 
   const [searchQuery, setSearchQuery] = useState("")
   const [debouncedQuery, setDebouncedQuery] = useState("")
@@ -167,7 +169,7 @@ export function EpisodeListScreen({ navigation }: EpisodeListScreenProps) {
             <Text
               preset="heading"
               tx="episodeListScreen:title"
-              style={themed($headerTitle)}
+              style={[themed($headerTitle), { fontSize: windowWidth < 380 ? 26 : 32 }]}
             />
             <View style={themed($headerUnderline)} />
           </View>

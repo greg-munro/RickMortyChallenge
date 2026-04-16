@@ -5,6 +5,7 @@ import {
   ScrollView,
   TextStyle,
   TouchableOpacity,
+  useWindowDimensions,
   View,
   ViewStyle,
 } from "react-native"
@@ -41,6 +42,8 @@ export function EpisodeDetailScreen({ navigation, route }: EpisodeDetailScreenPr
     fetchCharactersForEpisode,
   } = useRickMorty()
   const { themed, theme } = useAppTheme()
+  const { width: windowWidth } = useWindowDimensions()
+  const cardImageSize = Math.round((windowWidth - 16 - 8) / 2)
 
   const [activeFilters, setActiveFilters] = useState<Set<CharacterStatus>>(new Set())
 
@@ -114,7 +117,7 @@ export function EpisodeDetailScreen({ navigation, route }: EpisodeDetailScreenPr
     <View style={themed($skeletonGrid)}>
       {Array.from({ length: 6 }).map((_, i) => (
         <View key={i} style={themed($skeletonCard)}>
-          <SkeletonLoader width="100%" height={150} borderRadius={0} />
+          <SkeletonLoader width="100%" height={cardImageSize} borderRadius={0} />
           <View style={themed($skeletonCardInfo)}>
             <SkeletonLoader width="80%" height={14} borderRadius={0} />
             <SkeletonLoader
@@ -138,7 +141,10 @@ export function EpisodeDetailScreen({ navigation, route }: EpisodeDetailScreenPr
       <Text
         text={episode.name.toUpperCase()}
         weight="bold"
-        style={themed($episodeTitle)}
+        style={[themed($episodeTitle), {
+          fontSize: windowWidth < 380 ? 22 : 28,
+          lineHeight: windowWidth < 380 ? 26 : 32,
+        }]}
         numberOfLines={3}
       />
 

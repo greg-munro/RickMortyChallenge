@@ -98,11 +98,11 @@ export function NeoButton({
       >
         <Text
           text={label}
+          size="xs"
           style={[
             {
               color: textColor,
               fontFamily: theme.typography.primary.bold,
-              fontSize: 13,
               letterSpacing: 2,
               textTransform: "uppercase",
             } as TextStyle,
