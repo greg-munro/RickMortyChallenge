@@ -11,7 +11,6 @@ import {
 import { isRTL } from "@/i18n"
 import { translate } from "@/i18n/translate"
 import { useAppTheme } from "@/theme/context"
-import { $styles } from "@/theme/styles"
 import type { ThemedStyle } from "@/theme/types"
 import { ExtendedEdge, useSafeAreaInsetsStyle } from "@/utils/useSafeAreaInsetsStyle"
 
@@ -186,7 +185,7 @@ export function Header(props: HeaderProps) {
 
   return (
     <View style={[$container, $containerInsets, { backgroundColor }, $containerStyleOverride]}>
-      <View style={[$styles.row, $wrapper, $styleOverride]}>
+      <View style={[{ flexDirection: "row" }, $wrapper, $styleOverride]}>
         <HeaderAction
           tx={leftTx}
           text={leftText}

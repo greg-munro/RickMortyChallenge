@@ -36,9 +36,6 @@ const AppStack = () => {
     >
       <Stack.Screen name="EpisodeList" component={EpisodeListScreen} />
       <Stack.Screen name="EpisodeDetail" component={EpisodeDetailScreen} />
-
-      {/** 🔥 Your screens go here */}
-      {/* IGNITE_GENERATOR_ANCHOR_APP_STACK_SCREENS */}
     </Stack.Navigator>
   )
 }

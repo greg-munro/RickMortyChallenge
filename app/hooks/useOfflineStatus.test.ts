@@ -3,7 +3,7 @@ import NetInfo from "@react-native-community/netinfo"
 
 import { useOfflineStatus } from "./useOfflineStatus"
 
-const mockNetInfo = NetInfo as {
+const mockNetInfo = NetInfo as unknown as {
   fetch: jest.Mock
   addEventListener: jest.Mock
 }

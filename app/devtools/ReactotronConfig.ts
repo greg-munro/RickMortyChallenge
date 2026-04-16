@@ -133,7 +133,4 @@ declare global {
   }
 }
 
-/**
- * Now that we've setup all our Reactotron configuration, let's connect!
- */
 reactotron.connect()

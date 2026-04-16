@@ -11,7 +11,6 @@ export function loadString(key: string): string | null {
   try {
     return storage.getString(key) ?? null
   } catch {
-    // not sure why this would fail... even reading the RN docs I'm unclear
     return null
   }
 }
@@ -19,7 +18,7 @@ export function loadString(key: string): string | null {
 /**
  * Saves a string to storage.
  *
- * @param key The key to fetch.
+ * @param key The key to save under.
  * @param value The value to store.
  */
 export function saveString(key: string, value: string): boolean {
@@ -49,7 +48,7 @@ export function load<T>(key: string): T | null {
 /**
  * Saves an object to storage.
  *
- * @param key The key to fetch.
+ * @param key The key to save under.
  * @param value The value to store.
  */
 export function save(key: string, value: unknown): boolean {

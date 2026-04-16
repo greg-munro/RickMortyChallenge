@@ -30,7 +30,7 @@ import * as storage from "./utils/storage"
 
 export const NAVIGATION_PERSISTENCE_KEY = "NAVIGATION_STATE"
 
-// Web linking configuration
+// Web deep-link prefixes
 const prefix = Linking.createURL("/")
 const config = {
   screens: {

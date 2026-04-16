@@ -43,13 +43,10 @@ export interface ThemeProviderProps {
 }
 
 /**
- * The ThemeProvider is the heart and soul of the design token system. It provides a context wrapper
- * for your entire app to consume the design tokens as well as global functionality like the app's theme.
+ * The ThemeProvider wraps the entire app and provides design tokens and global
+ * theme switching via the `useAppTheme()` hook.
  *
- * To get started, you want to wrap your entire app's JSX hierarchy in `ThemeProvider`
- * and then use the `useAppTheme()` hook to access the theme context.
- *
- * Documentation: https://docs.infinite.red/ignite-cli/boilerplate/app/theme/Theming/
+ * Wrap your app in `ThemeProvider` and consume the theme with `useAppTheme()`.
  */
 export const ThemeProvider: FC<PropsWithChildren<ThemeProviderProps>> = ({
   children,
@@ -115,7 +112,6 @@ export const ThemeProvider: FC<PropsWithChildren<ThemeProviderProps>> = ({
           return f
         }
       })
-      // Flatten the array of styles into a single object
       return Object.assign({}, ...stylesArray) as T
     },
     [theme],
@@ -133,8 +129,7 @@ export const ThemeProvider: FC<PropsWithChildren<ThemeProviderProps>> = ({
 }
 
 /**
- * This is the primary hook that you will use to access the theme context in your components.
- * Documentation: https://docs.infinite.red/ignite-cli/boilerplate/app/theme/useAppTheme.tsx/
+ * Primary hook to access the theme context in components.
  */
 export const useAppTheme = () => {
   const context = useContext(ThemeContext)

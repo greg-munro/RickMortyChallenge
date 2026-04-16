@@ -76,8 +76,8 @@ export const RickMortyProvider: FC<PropsWithChildren> = ({ children }) => {
   useEffect(() => {
     const cached = safeJsonParse<RickMortyEpisode[]>(cachedEpisodesRaw)
     if (cached && cached.length > 0) setEpisodes(cached)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []) // intentionally runs once
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- intentionally runs once on mount to hydrate state
+  }, [])
 
   // ── Fetch episodes ──────────────────────────────────────────────────────
 
@@ -164,8 +164,8 @@ export const RickMortyProvider: FC<PropsWithChildren> = ({ children }) => {
 
   useEffect(() => {
     fetchEpisodes()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []) // run once on mount
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- intentionally runs once on mount
+  }, [])
 
   // ── Context value ────────────────────────────────────────────────────────
 

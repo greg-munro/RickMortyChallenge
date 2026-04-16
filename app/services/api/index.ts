@@ -1,10 +1,3 @@
-/**
- * This Api class lets you define an API endpoint and methods to request
- * data and process it.
- *
- * See the [Backend API Integration](https://docs.infinite.red/ignite-cli/boilerplate/app/services/#backend-api-integration)
- * documentation for more details.
- */
 import { ApiResponse, ApisauceInstance, create } from "apisauce"
 
 import Config from "@/config"
@@ -17,9 +10,6 @@ import type {
   RickMortyEpisode,
 } from "./types"
 
-/**
- * Configuring the apisauce instance.
- */
 export const DEFAULT_API_CONFIG: ApiConfig = {
   url: Config.API_URL,
   timeout: 10000,

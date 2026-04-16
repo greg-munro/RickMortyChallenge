@@ -5,13 +5,10 @@ import en from "../app/i18n/en"
 // Use this array for keys that for whatever reason aren't greppable so they
 // don't hold your test suite hostage by always failing.
 const EXCEPTIONS: string[] = [
-  // "welcomeScreen:readyForLaunch",
-
   /**
-   * This translation key actually shows up in a comment describing the usage of the translate
-   * function in the app/i18n/translate.ts file. Because the grep command in the i18n test below
-   * doesn't account for commented out code, we must manually exclude it so tests don't fail
-   * because of a comment.
+   * This translation key appears in a comment inside app/i18n/translate.ts describing
+   * the translate() function. The grep command doesn't skip commented code, so we
+   * exclude it here to prevent a false failure.
    */
   "hello",
 ]
@@ -65,7 +62,6 @@ describe("i18n", () => {
 
       for (let i = 0; i < allTranslationsUsed.length; i += 1) {
         if (!EXCEPTIONS.includes(allTranslationsUsed[i])) {
-          // You can add keys to EXCEPTIONS (above) if you don't want them included in the test
           expect(allTranslationsDefined).toContainEqual(allTranslationsUsed[i])
         }
       }

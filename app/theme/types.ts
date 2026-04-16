@@ -2,8 +2,7 @@ import type { StyleProp } from "react-native"
 
 import { colors as colorsLight } from "./colors"
 import { colors as colorsDark } from "./colorsDark"
-import { spacing as spacingLight } from "./spacing"
-import { spacing as spacingDark } from "./spacingDark"
+import { spacing } from "./spacing"
 import { timing } from "./timing"
 import { typography } from "./typography"
 
@@ -14,8 +13,7 @@ export type ThemeContextModeT = ImmutableThemeContextModeT | undefined
 // Because we have two themes, we need to define the types for each of them.
 // colorsLight and colorsDark should have the same keys, but different values.
 export type Colors = typeof colorsLight | typeof colorsDark
-// The spacing type needs to take into account the different spacing values for light and dark themes.
-export type Spacing = typeof spacingLight | typeof spacingDark
+export type Spacing = typeof spacing
 
 // These two are consistent across themes.
 export type Timing = typeof timing
@@ -56,9 +54,5 @@ export type ThemedStyleArray<T> = (
   | (StyleProp<T> | ThemedStyle<T>)[]
 )[]
 
-/**
- */
 export type AllowedStylesT<T> = ThemedStyle<T> | StyleProp<T> | ThemedStyleArray<T>
-/**
- */
 export type ThemedFnT = <T>(styleOrStyleFn: AllowedStylesT<T>) => T

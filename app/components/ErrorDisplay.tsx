@@ -71,7 +71,7 @@ const $shadowWrapper: ThemedStyle<ViewStyle> = () => ({
 })
 
 const $container: ThemedStyle<ViewStyle> = ({ colors, spacing }) => ({
-  backgroundColor: colors.palette.secondary, // Vivid Yellow
+  backgroundColor: colors.palette.secondary,
   borderWidth: 3,
   borderColor: colors.border,
   alignItems: "center",

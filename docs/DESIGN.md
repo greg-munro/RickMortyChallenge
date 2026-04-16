@@ -1,4 +1,4 @@
-## Overview
+# Overview - Design
 
 Modern and approachable with a vibrant, AI-focused personality. The design feels conversational and inviting through its gradient backgrounds and clean interface elements. Medium density with generous whitespace creates a breathable, premium feel that balances visual excitement with usability.
 
@@ -7,6 +7,7 @@ Centered content layout with generous padding and consistent spacing scale. The 
 Uses a 4px base grid with scale: 1, 1.5, 2, 3, 4, 5, 6, 8, 10, 12, 14, 20.
 
 ## Colors
+
 - **Warm Canvas** (#eceae4): Main background color for UI elements and cards
 - **Charcoal Text** (#1c1c1c): Primary text color for headings and body content
 - **Muted Stone** (#5f5f5d): Secondary text color for muted content
@@ -15,6 +16,7 @@ Uses a 4px base grid with scale: 1, 1.5, 2, 3, 4, 5, 6, 8, 10, 12, 14, 20.
 - **White** (#ffffff): Pure white for contrast elements
 
 ## Typography
+
 - **Headline Font**: Camera Plain Variable
 - **Body Font**: Camera Plain Variable
 - **Label Font**: Camera Plain Variable
@@ -26,6 +28,7 @@ Camera Plain Variable serves as a unified typeface across all text elements, cre
 Subtle depth strategy using soft shadows with multiple layers for elevation. Cards and interactive elements use gentle box-shadows with rgba values for transparency. The gradient background creates natural depth without relying heavily on shadow effects.
 
 ## Components
+
 - **Gradient Hero Section**: Full-width hero section with vibrant blue-to-pink gradient background, centered content, and prominent call-to-action
 - **Chat Interface Card**: Rounded white card with subtle shadow containing chat input field, action buttons, and interactive elements
 - **Navigation Header**: Clean horizontal navigation with logo, menu items, and action buttons using consistent spacing and typography
@@ -33,6 +36,7 @@ Subtle depth strategy using soft shadows with multiple layers for elevation. Car
 - **Input Field**: Large rounded input areas with placeholder text and integrated action buttons
 
 ## Do's and Don'ts
+
 - Do use the 4px base spacing unit to maintain consistent rhythm across all interface elements
 - Don't mix border radius values outside the established scale - stick to 6px, 8px, 12px, 16px, 24px, or full rounded
 - Do maintain the subtle shadow strategy with layered rgba values for depth without overwhelming the clean aesthetic

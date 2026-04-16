@@ -7,8 +7,6 @@ import { NativeStackScreenProps } from "@react-navigation/native-stack"
 export type AppStackParamList = {
   EpisodeList: undefined
   EpisodeDetail: { episodeId: number }
-  // 🔥 Your screens go here
-  // IGNITE_GENERATOR_ANCHOR_APP_STACK_PARAM_LIST
 }
 
 export type AppStackScreenProps<T extends keyof AppStackParamList> = NativeStackScreenProps<
