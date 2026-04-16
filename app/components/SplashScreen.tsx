@@ -183,7 +183,7 @@ const $topStripeOuter: ThemedStyle<ViewStyle> = () => ({
   top: 0,
   left: 0,
   right: 0,
-  height: 8,
+  height: 64,
   overflow: "hidden",
 })
 
@@ -199,7 +199,7 @@ const $bottomStripeOuter: ThemedStyle<ViewStyle> = () => ({
   bottom: 0,
   left: 0,
   right: 0,
-  height: 8,
+  height: 64,
   overflow: "hidden",
 })
 
