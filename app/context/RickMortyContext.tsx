@@ -2,7 +2,6 @@ import {
   createContext,
   FC,
   PropsWithChildren,
-  useCallback,
   useContext,
   useEffect,
   useState,
@@ -15,24 +14,20 @@ import { extractCharacterIds } from "@/utils/episodeUtils"
 import { isCacheStale, safeJsonParse } from "@/utils/cacheUtils"
 import { load, save } from "@/utils/storage"
 
-// ─── MMKV keys ──────────────────────────────────────────────────────────────
 
 const EPISODES_CACHE_KEY = "rickmorty.episodes"
 const EPISODES_TIMESTAMP_KEY = "rickmorty.episodes.timestamp"
 /** Character cache is keyed per episode: rickmorty.characters.<episodeId> */
 const characterCacheKey = (episodeId: number) => `rickmorty.characters.${episodeId}`
 
-// ─── Context types ──────────────────────────────────────────────────────────
 
 export interface RickMortyContextType {
-  // ── Episodes ──
   episodes: RickMortyEpisode[]
   episodesLoading: boolean
   episodesError: string | null
   /** Call to (re)fetch all episodes. Respects 1-hour MMKV cache by default. */
   fetchEpisodes: (force?: boolean) => Promise<void>
 
-  // ── Characters ──
   /** Characters keyed by episode ID, populated on demand */
   charactersByEpisode: Record<number, RickMortyCharacter[]>
   /** Per-episode loading states */
@@ -43,7 +38,6 @@ export interface RickMortyContextType {
   fetchCharactersForEpisode: (episode: RickMortyEpisode) => Promise<void>
 }
 
-// ─── Context + hook ─────────────────────────────────────────────────────────
 
 export const RickMortyContext = createContext<RickMortyContextType | null>(null)
 
@@ -53,36 +47,29 @@ export const useRickMorty = (): RickMortyContextType => {
   return ctx
 }
 
-// ─── Provider ───────────────────────────────────────────────────────────────
 
 export const RickMortyProvider: FC<PropsWithChildren> = ({ children }) => {
-  // ── Episode state ──
   const [episodes, setEpisodes] = useState<RickMortyEpisode[]>([])
   const [episodesLoading, setEpisodesLoading] = useState(false)
   const [episodesError, setEpisodesError] = useState<string | null>(null)
 
-  // ── Character state ──
   const [charactersByEpisode, setCharactersByEpisode] = useState<
     Record<number, RickMortyCharacter[]>
   >({})
   const [charactersLoading, setCharactersLoading] = useState<Record<number, boolean>>({})
   const [charactersError, setCharactersError] = useState<Record<number, string | null>>({})
 
-  // ── MMKV-backed strings for episode cache metadata ──
   const [cachedEpisodesRaw, setCachedEpisodesRaw] = useMMKVString(EPISODES_CACHE_KEY)
   const [cachedTimestampRaw, setCachedTimestampRaw] = useMMKVString(EPISODES_TIMESTAMP_KEY)
 
-  // ── Seed episode state from MMKV on mount ──
   useEffect(() => {
     const cached = safeJsonParse<RickMortyEpisode[]>(cachedEpisodesRaw)
     if (cached && cached.length > 0) setEpisodes(cached)
     // eslint-disable-next-line react-hooks/exhaustive-deps -- intentionally runs once on mount to hydrate state
   }, [])
 
-  // ── Fetch episodes ──────────────────────────────────────────────────────
 
-  const fetchEpisodes = useCallback(
-    async (force = false) => {
+  const fetchEpisodes = async (force = false) => {
       const cachedTimestamp = safeJsonParse<number>(cachedTimestampRaw)
       const cached = safeJsonParse<RickMortyEpisode[]>(cachedEpisodesRaw)
 
@@ -114,14 +101,10 @@ export const RickMortyProvider: FC<PropsWithChildren> = ({ children }) => {
       }
 
       setEpisodesLoading(false)
-    },
-    [cachedEpisodesRaw, cachedTimestampRaw, setCachedEpisodesRaw, setCachedTimestampRaw],
-  )
+    }
 
-  // ── Fetch characters for an episode ─────────────────────────────────────
 
-  const fetchCharactersForEpisode = useCallback(
-    async (episode: RickMortyEpisode) => {
+  const fetchCharactersForEpisode = async (episode: RickMortyEpisode) => {
       const epId = episode.id
 
       // Already loaded in-memory — skip
@@ -156,18 +139,14 @@ export const RickMortyProvider: FC<PropsWithChildren> = ({ children }) => {
       }
 
       setCharactersLoading((prev) => ({ ...prev, [epId]: false }))
-    },
-    [charactersByEpisode],
-  )
+    }
 
-  // ── Auto-fetch on mount ──────────────────────────────────────────────────
 
   useEffect(() => {
     fetchEpisodes()
     // eslint-disable-next-line react-hooks/exhaustive-deps -- intentionally runs once on mount
   }, [])
 
-  // ── Context value ────────────────────────────────────────────────────────
 
   const value: RickMortyContextType = {
     episodes,

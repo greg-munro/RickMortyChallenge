@@ -1,4 +1,4 @@
-import { FC, useCallback, useEffect, useMemo, useState } from "react"
+import { FC, useEffect, useState } from "react"
 import {
   FlatList,
   ListRenderItemInfo,
@@ -41,10 +41,9 @@ export const EpisodeDetailScreen: FC<EpisodeDetailScreenProps> = ({ navigation, 
   } = useRickMorty()
   const { themed, theme } = useAppTheme()
 
-  // ── Filter state ──────────────────────────────────────────────────────────
   const [activeFilters, setActiveFilters] = useState<Set<CharacterStatus>>(new Set())
 
-  const toggleFilter = useCallback((status: CharacterStatus) => {
+  const toggleFilter = (status: CharacterStatus) => {
     setActiveFilters((prev) => {
       const next = new Set(prev)
       if (next.has(status)) {
@@ -54,9 +53,8 @@ export const EpisodeDetailScreen: FC<EpisodeDetailScreenProps> = ({ navigation, 
       }
       return next
     })
-  }, [])
+  }
 
-  // ── Chip row entrance animation ───────────────────────────────────────────
   const chipRowX = useSharedValue(-60)
   const chipRowOpacity = useSharedValue(0)
   const chipRowAnimStyle = useAnimatedStyle(() => ({
@@ -64,11 +62,7 @@ export const EpisodeDetailScreen: FC<EpisodeDetailScreenProps> = ({ navigation, 
     transform: [{ translateX: chipRowX.value }],
   }))
 
-  // ── Derive episode from context ───────────────────────────────────────────
-  const episode = useMemo(
-    () => episodes.find((ep) => ep.id === episodeId) ?? null,
-    [episodes, episodeId],
-  )
+  const episode = episodes.find((ep) => ep.id === episodeId) ?? null
 
   const characters = episode ? (charactersByEpisode[episode.id] ?? []) : []
   const isLoading = episode ? (charactersLoading[episode.id] ?? false) : false
@@ -85,18 +79,16 @@ export const EpisodeDetailScreen: FC<EpisodeDetailScreenProps> = ({ navigation, 
     if (episode) fetchCharactersForEpisode(episode)
   }, [episode, fetchCharactersForEpisode])
 
-  // ── Status counts & available filters ────────────────────────────────────
-  const statusCounts = useMemo(() => {
+  const statusCounts = (() => {
     const counts = new Map<CharacterStatus, number>()
     for (const c of characters) {
       counts.set(c.status, (counts.get(c.status) ?? 0) + 1)
     }
     return counts
-  }, [characters])
+  })()
 
-  const availableStatuses = useMemo(
-    () => (["Alive", "Dead", "unknown"] as CharacterStatus[]).filter((s) => statusCounts.has(s)),
-    [statusCounts],
+  const availableStatuses = (["Alive", "Dead", "unknown"] as CharacterStatus[]).filter((s) =>
+    statusCounts.has(s),
   )
 
   // Animate chip row in when chips first become available
@@ -107,26 +99,20 @@ export const EpisodeDetailScreen: FC<EpisodeDetailScreenProps> = ({ navigation, 
     }
   }, [availableStatuses.length])
 
-  // ── Filtered + sorted characters ─────────────────────────────────────────
-  const filteredCharacters = useMemo(() => {
+  const filteredCharacters = (() => {
     const STATUS_ORDER: Record<CharacterStatus, number> = { Alive: 0, Dead: 1, unknown: 2 }
     if (activeFilters.size === 0) return characters
     return characters
       .filter((c) => activeFilters.has(c.status))
       .sort((a, b) => (STATUS_ORDER[a.status] ?? 3) - (STATUS_ORDER[b.status] ?? 3))
-  }, [characters, activeFilters])
+  })()
 
-  // ── Render helpers ────────────────────────────────────────────────────────
-  const renderCharacter = useCallback(
-    ({ item, index }: ListRenderItemInfo<RickMortyCharacter>) => (
-      <CharacterCard character={item} index={index} />
-    ),
-    [],
+  const renderCharacter = ({ item, index }: ListRenderItemInfo<RickMortyCharacter>) => (
+    <CharacterCard character={item} index={index} />
   )
 
-  const keyExtractor = useCallback((item: RickMortyCharacter) => String(item.id), [])
+  const keyExtractor = (item: RickMortyCharacter) => String(item.id)
 
-  // ── Character skeleton ────────────────────────────────────────────────────
   const renderCharacterSkeletons = () => (
     <View style={themed($skeletonGrid)}>
       {Array.from({ length: 6 }).map((_, i) => (
@@ -134,29 +120,26 @@ export const EpisodeDetailScreen: FC<EpisodeDetailScreenProps> = ({ navigation, 
           <SkeletonLoader width="100%" height={150} borderRadius={0} />
           <View style={themed($skeletonCardInfo)}>
             <SkeletonLoader width="80%" height={14} borderRadius={0} />
-            <SkeletonLoader width="50%" height={20} borderRadius={0} style={themed($skeletonBadge)} />
+            <SkeletonLoader
+              width="50%"
+              height={20}
+              borderRadius={0}
+              style={themed($skeletonBadge)}
+            />
           </View>
         </View>
       ))}
     </View>
   )
 
-  // ── Episode info header ───────────────────────────────────────────────────
-  const ListHeader = useMemo(() => {
+  const ListHeader = (() => {
     if (!episode) return null
     return (
       <View style={themed($listHeaderContainer)}>
-        {/* Episode code badge — yellow, sharp, bordered */}
         <View style={themed($episodeCodeBadge)}>
-          <Text
-            text={episode.episode}
-            size="sm"
-            weight="bold"
-            style={themed($episodeCodeText)}
-          />
+          <Text text={episode.episode} size="sm" weight="bold" style={themed($episodeCodeText)} />
         </View>
 
-        {/* Episode title */}
         <Text
           text={episode.name.toUpperCase()}
           weight="bold"
@@ -164,7 +147,6 @@ export const EpisodeDetailScreen: FC<EpisodeDetailScreenProps> = ({ navigation, 
           numberOfLines={3}
         />
 
-        {/* Meta rows */}
         <View style={themed($metaRow)}>
           <Text text="◉" style={themed($metaIcon)} />
           <Text text={episode.air_date} size="sm" weight="bold" style={themed($metaText)} />
@@ -180,16 +162,10 @@ export const EpisodeDetailScreen: FC<EpisodeDetailScreenProps> = ({ navigation, 
           />
         </View>
 
-        {/* Section divider — thick black border */}
         <View style={themed($divider)} />
 
-        <Text
-          tx="episodeDetailScreen:characters"
-          weight="bold"
-          style={themed($sectionTitle)}
-        />
+        <Text tx="episodeDetailScreen:characters" weight="bold" style={themed($sectionTitle)} />
 
-        {/* Status filter chips */}
         {!isLoading && !error && availableStatuses.length > 0 && (
           <Animated.View style={chipRowAnimStyle}>
             <ScrollView
@@ -211,7 +187,6 @@ export const EpisodeDetailScreen: FC<EpisodeDetailScreenProps> = ({ navigation, 
           </Animated.View>
         )}
 
-        {/* Loading / error states */}
         {isLoading && renderCharacterSkeletons()}
         {!isLoading && error && (
           <ErrorDisplay
@@ -222,38 +197,20 @@ export const EpisodeDetailScreen: FC<EpisodeDetailScreenProps> = ({ navigation, 
         )}
       </View>
     )
-  }, [
-    episode,
-    isLoading,
-    error,
-    availableStatuses,
-    statusCounts,
-    activeFilters,
-    toggleFilter,
-    themed,
-    theme.colors.textDim,
-    fetchCharactersForEpisode,
-  ])
+  })()
 
-  // ── Guard: episode not found ──────────────────────────────────────────────
   if (!episode) {
     return (
       <Screen preset="fixed" safeAreaEdges={["top", "bottom"]} style={themed($screen)}>
         <View style={themed($notFound)}>
-          <Text
-            text="EPISODE NOT FOUND."
-            weight="bold"
-            style={themed($notFoundText)}
-          />
+          <Text text="EPISODE NOT FOUND." weight="bold" style={themed($notFoundText)} />
         </View>
       </Screen>
     )
   }
 
-  // ── Main render ──────────────────────────────────────────────────────────
   return (
     <Screen preset="fixed" safeAreaEdges={["top"]} style={themed($screen)}>
-      {/* Back button — bordered, bold, neo-styled */}
       <TouchableOpacity
         style={themed($backButton)}
         onPress={() => navigation.goBack()}
@@ -265,7 +222,6 @@ export const EpisodeDetailScreen: FC<EpisodeDetailScreenProps> = ({ navigation, 
         <Text text="EPISODES" size="sm" weight="bold" style={themed($backText)} />
       </TouchableOpacity>
 
-      {/* Character grid */}
       {!isLoading && !error ? (
         <FlatList<RickMortyCharacter>
           data={filteredCharacters}
@@ -294,7 +250,6 @@ export const EpisodeDetailScreen: FC<EpisodeDetailScreenProps> = ({ navigation, 
   )
 }
 
-// ─── Styles ───────────────────────────────────────────────────────────────────
 
 const $screen: ThemedStyle<ViewStyle> = ({ colors }) => ({
   flex: 1,

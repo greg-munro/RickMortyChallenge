@@ -2,22 +2,18 @@
 // Philosophy: unapologetic visibility — pure black ink, cream canvas, vibrant accent bursts.
 // No grays. No subtle transparencies. High contrast everywhere.
 const palette = {
-  // ── Canvas & Ink ──────────────────────────────────────────────────────────
   cream: "#FFFDF5", // main background — aged paper / newsprint
   ink: "#000000", // all text, all borders, all shadows
   white: "#FFFFFF", // card interiors, contrast panels
 
-  // ── Accent Burst Colors ───────────────────────────────────────────────────
   accent: "#FF6B6B", // Hot Red — primary action, badges, tint
   secondary: "#FFD93D", // Vivid Yellow — secondary action, section highlights
   muted: "#C4B5FD", // Soft Violet — tertiary, subtle backgrounds
 
-  // ── Status Colors (vivid, high-contrast) ─────────────────────────────────
   statusAlive: "#4ade80", // vivid green
   statusDead: "#FF6B6B", // reuse accent red
   statusUnknown: "#C4B5FD", // reuse muted violet
 
-  // ── Legacy palette keys kept for Ignite internals ─────────────────────────
   neutral100: "#FFFFFF",
   neutral200: "#FFFDF5",
   neutral300: "#e8e5dd", // skeleton loader bg

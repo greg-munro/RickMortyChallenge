@@ -3,7 +3,6 @@
  * https://rickandmortyapi.com/documentation/#rest
  */
 
-// ─── Pagination ────────────────────────────────────────────────────────────
 
 export interface PaginationInfo {
   count: number
@@ -17,7 +16,6 @@ export interface PaginatedResponse<T> {
   results: T[]
 }
 
-// ─── Episode ───────────────────────────────────────────────────────────────
 
 export interface RickMortyEpisode {
   id: number
@@ -32,7 +30,6 @@ export interface RickMortyEpisode {
   created: string
 }
 
-// ─── Character ─────────────────────────────────────────────────────────────
 
 export type CharacterStatus = "Alive" | "Dead" | "unknown"
 export type CharacterGender = "Female" | "Male" | "Genderless" | "unknown"
@@ -59,7 +56,6 @@ export interface RickMortyCharacter {
   created: string
 }
 
-// ─── API Config ────────────────────────────────────────────────────────────
 
 export interface ApiConfig {
   /** Base URL for the API */
@@ -68,7 +64,6 @@ export interface ApiConfig {
   timeout: number
 }
 
-// ─── Legacy (kept for ErrorBoundary / other boilerplate references) ────────
 
 /** @deprecated Use RickMortyEpisode instead */
 export interface EpisodeItem {

@@ -14,7 +14,6 @@ beforeEach(() => {
   mockNetInfo.addEventListener.mockReturnValue(jest.fn())
 })
 
-// ─── useOfflineStatus ─────────────────────────────────────────────────────────
 
 describe("useOfflineStatus", () => {
   it("returns false initially (online assumed until proven otherwise)", () => {

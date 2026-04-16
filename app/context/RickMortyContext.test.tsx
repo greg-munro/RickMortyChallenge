@@ -19,7 +19,6 @@ jest.mock("@/utils/storage", () => ({
   save: jest.fn(),
 }))
 
-// ─── Fixtures ────────────────────────────────────────────────────────────────
 
 const mockEpisode: RickMortyEpisode = {
   id: 1,
@@ -46,7 +45,6 @@ const mockCharacter: RickMortyCharacter = {
   created: "2017-11-04T18:48:46.250Z",
 }
 
-// ─── Helpers ─────────────────────────────────────────────────────────────────
 
 const wrapper = ({ children }: { children: React.ReactNode }) => (
   <RickMortyProvider>{children}</RickMortyProvider>
@@ -60,7 +58,6 @@ beforeEach(() => {
   jest.mocked(load).mockReturnValue(null)
 })
 
-// ─── useRickMorty ─────────────────────────────────────────────────────────────
 
 describe("useRickMorty", () => {
   it("throws when used outside RickMortyProvider", () => {
@@ -72,7 +69,6 @@ describe("useRickMorty", () => {
   })
 })
 
-// ─── Episodes ─────────────────────────────────────────────────────────────────
 
 describe("RickMortyProvider — episodes", () => {
   it("fetches episodes from the API on mount", async () => {
@@ -128,7 +124,6 @@ describe("RickMortyProvider — episodes", () => {
   })
 })
 
-// ─── Characters ───────────────────────────────────────────────────────────────
 
 describe("RickMortyProvider — characters", () => {
   it("fetches characters from the API and persists them to storage", async () => {

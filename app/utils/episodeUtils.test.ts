@@ -16,7 +16,6 @@ const makeEpisode = (id: number, episode: string): RickMortyEpisode => ({
   created: "2017-11-10T12:56:33.798Z",
 })
 
-// ─── parseEpisodeCode ────────────────────────────────────────────────────────
 
 describe("parseEpisodeCode", () => {
   it("parses a valid uppercase code", () => {
@@ -40,7 +39,6 @@ describe("parseEpisodeCode", () => {
   })
 })
 
-// ─── seasonLabel ─────────────────────────────────────────────────────────────
 
 describe("seasonLabel", () => {
   it("returns a human-readable label", () => {
@@ -49,7 +47,6 @@ describe("seasonLabel", () => {
   })
 })
 
-// ─── groupEpisodesBySeason ───────────────────────────────────────────────────
 
 describe("groupEpisodesBySeason", () => {
   it("returns an empty array when given no episodes", () => {
@@ -96,7 +93,6 @@ describe("groupEpisodesBySeason", () => {
   })
 })
 
-// ─── extractCharacterIds ─────────────────────────────────────────────────────
 
 describe("extractCharacterIds", () => {
   it("extracts numeric IDs from full API URLs", () => {

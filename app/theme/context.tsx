@@ -2,10 +2,8 @@ import {
   createContext,
   FC,
   PropsWithChildren,
-  useCallback,
   useContext,
   useEffect,
-  useMemo,
 } from "react"
 import { StyleProp, useColorScheme } from "react-native"
 import {
@@ -63,47 +61,43 @@ export const ThemeProvider: FC<PropsWithChildren<ThemeProviderProps>> = ({
    *  - setThemeContextOverride("light") sets the app theme to light no matter what the system theme is.
    *  - setThemeContextOverride(undefined) the app will follow the operating system theme.
    */
-  const setThemeContextOverride = useCallback(
-    (newTheme: ThemeContextModeT) => {
+  const setThemeContextOverride = (newTheme: ThemeContextModeT) => {
       setThemeScheme(newTheme)
-    },
-    [setThemeScheme],
-  )
+    }
 
   /**
    * initialContext is the theme context passed in from the app.tsx file and always takes precedence.
    * themeScheme is the value from MMKV. If undefined, we fall back to the system theme
    * systemColorScheme is the value from the device. If undefined, we fall back to "light"
    */
-  const themeContext: ImmutableThemeContextModeT = useMemo(() => {
+  const themeContext: ImmutableThemeContextModeT = (() => {
     const t = initialContext || themeScheme || (!!systemColorScheme ? systemColorScheme : "light")
     return t === "dark" ? "dark" : "light"
-  }, [initialContext, themeScheme, systemColorScheme])
+  })()
 
-  const navigationTheme: NavTheme = useMemo(() => {
+  const navigationTheme: NavTheme = (() => {
     switch (themeContext) {
       case "dark":
         return NavDarkTheme
       default:
         return NavDefaultTheme
     }
-  }, [themeContext])
+  })()
 
-  const theme: Theme = useMemo(() => {
+  const theme: Theme = (() => {
     switch (themeContext) {
       case "dark":
         return darkTheme
       default:
         return lightTheme
     }
-  }, [themeContext])
+  })()
 
   useEffect(() => {
     setImperativeTheming(theme)
   }, [theme])
 
-  const themed = useCallback(
-    <T,>(styleOrStyleFn: AllowedStylesT<T>) => {
+  const themed = <T,>(styleOrStyleFn: AllowedStylesT<T>) => {
       const flatStyles = [styleOrStyleFn].flat(3) as (ThemedStyle<T> | StyleProp<T>)[]
       const stylesArray = flatStyles.map((f) => {
         if (typeof f === "function") {
@@ -113,9 +107,7 @@ export const ThemeProvider: FC<PropsWithChildren<ThemeProviderProps>> = ({
         }
       })
       return Object.assign({}, ...stylesArray) as T
-    },
-    [theme],
-  )
+    }
 
   const value = {
     navigationTheme,

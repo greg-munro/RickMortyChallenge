@@ -15,7 +15,6 @@ export const DEFAULT_API_CONFIG: ApiConfig = {
   timeout: 10000,
 }
 
-// ─── Return types ───────────────────────────────────────────────────────────
 
 export type GetEpisodesResult =
   | { kind: "ok"; episodes: RickMortyEpisode[] }
@@ -25,7 +24,6 @@ export type GetCharactersResult =
   | { kind: "ok"; characters: RickMortyCharacter[] }
   | GeneralApiProblem
 
-// ─── Api class ──────────────────────────────────────────────────────────────
 
 /**
  * Manages all requests to the Rick and Morty API.

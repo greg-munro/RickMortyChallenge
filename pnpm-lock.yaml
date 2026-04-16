@@ -117,6 +117,9 @@ importers:
       babel-jest:
         specifier: ^29.2.1
         version: 29.7.0(@babel/core@7.29.0)
+      babel-plugin-react-compiler:
+        specifier: ^1.0.0
+        version: 1.0.0
       dependency-cruiser:
         specifier: ^17.0.2
         version: 17.3.10

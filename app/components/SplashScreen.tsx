@@ -36,23 +36,18 @@ interface SplashScreenProps {
 export function SplashScreen({ onFinish }: SplashScreenProps) {
   const { themed } = useAppTheme()
 
-  // ── Stripe widths (0 → "100%") ─────────────────────────────────────────
   const stripeWidth = useSharedValue(0)
 
-  // ── Headline box ────────────────────────────────────────────────────────
   const headlineY = useSharedValue(-100)
   const headlineOpacity = useSharedValue(0)
   const headlineScale = useSharedValue(1)
 
-  // ── GIF ─────────────────────────────────────────────────────────────────
   const gifScale = useSharedValue(0.6)
   const gifOpacity = useSharedValue(0)
 
-  // ── Tagline ─────────────────────────────────────────────────────────────
   const taglineY = useSharedValue(24)
   const taglineOpacity = useSharedValue(0)
 
-  // ── Exit ─────────────────────────────────────────────────────────────────
   const exitY = useSharedValue(0)
   const exitOpacity = useSharedValue(1)
 
@@ -104,7 +99,6 @@ export function SplashScreen({ onFinish }: SplashScreenProps) {
     return () => clearTimeout(exitDelay)
   }, [])
 
-  // ── Animated styles ───────────────────────────────────────────────────────
 
   const $stripeAnimStyle = useAnimatedStyle(() => ({
     width: `${stripeWidth.value}%`,

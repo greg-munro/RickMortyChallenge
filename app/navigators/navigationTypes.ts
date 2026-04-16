@@ -2,7 +2,6 @@ import { ComponentProps } from "react"
 import { NavigationContainer } from "@react-navigation/native"
 import { NativeStackScreenProps } from "@react-navigation/native-stack"
 
-// ─── App Stack ───────────────────────────────────────────────────────────────
 
 export type AppStackParamList = {
   EpisodeList: undefined

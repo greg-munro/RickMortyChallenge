@@ -1,4 +1,4 @@
-import { FC, useCallback, useEffect, useMemo, useRef, useState } from "react"
+import { FC, useEffect, useRef, useState } from "react"
 import NetInfo from "@react-native-community/netinfo"
 import Animated, {
   useAnimatedStyle,
@@ -40,12 +40,10 @@ export const EpisodeListScreen: FC<EpisodeListScreenProps> = ({ navigation }) =>
   const { themed, theme } = useAppTheme()
   const isOffline = useOfflineStatus()
 
-  // ── Search state ─────────────────────────────────────────────────────────
   const [searchQuery, setSearchQuery] = useState("")
   const [debouncedQuery, setDebouncedQuery] = useState("")
   const debounceTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
 
-  // ── Offline chip animation ────────────────────────────────────────────────
   const chipScale = useSharedValue(0)
   const chipOpacity = useSharedValue(0)
   const chipTranslateX = useSharedValue(0)
@@ -65,7 +63,7 @@ export const EpisodeListScreen: FC<EpisodeListScreenProps> = ({ navigation }) =>
     }
   }, [isOffline])
 
-  const triggerChipShake = useCallback(() => {
+  const triggerChipShake = () => {
     chipTranslateX.value = withSequence(
       withTiming(-6, { duration: 40 }),
       withTiming(6, { duration: 40 }),
@@ -73,25 +71,23 @@ export const EpisodeListScreen: FC<EpisodeListScreenProps> = ({ navigation }) =>
       withTiming(4, { duration: 40 }),
       withTiming(0, { duration: 40 }),
     )
-  }, [])
+  }
 
-  // ── Search handlers ───────────────────────────────────────────────────────
-  const handleSearchChange = useCallback((text: string) => {
+  const handleSearchChange = (text: string) => {
     setSearchQuery(text)
     if (debounceTimer.current) clearTimeout(debounceTimer.current)
     debounceTimer.current = setTimeout(() => {
       setDebouncedQuery(text.trim().toLowerCase())
     }, 300)
-  }, [])
+  }
 
-  const handleClearSearch = useCallback(() => {
+  const handleClearSearch = () => {
     setSearchQuery("")
     setDebouncedQuery("")
     if (debounceTimer.current) clearTimeout(debounceTimer.current)
-  }, [])
+  }
 
-  // ── Pull-to-refresh ───────────────────────────────────────────────────────
-  const handleRefresh = useCallback(async () => {
+  const handleRefresh = async () => {
     const state = await NetInfo.fetch()
     const currentlyOffline = !state.isConnected || state.isInternetReachable === false
     if (currentlyOffline) {
@@ -99,10 +95,9 @@ export const EpisodeListScreen: FC<EpisodeListScreenProps> = ({ navigation }) =>
       return
     }
     fetchEpisodes(true)
-  }, [fetchEpisodes, triggerChipShake])
+  }
 
-  // ── Filtered + grouped data ───────────────────────────────────────────────
-  const sections = useMemo<SectionListData<RickMortyEpisode, EpisodeSection>[]>(() => {
+  const sections: SectionListData<RickMortyEpisode, EpisodeSection>[] = (() => {
     const filtered = debouncedQuery
       ? episodes.filter(
           (ep) =>
@@ -111,37 +106,25 @@ export const EpisodeListScreen: FC<EpisodeListScreenProps> = ({ navigation }) =>
         )
       : episodes
     return groupEpisodesBySeason(filtered)
-  }, [episodes, debouncedQuery])
+  })()
 
-  // ── Navigation ────────────────────────────────────────────────────────────
-  const handleEpisodePress = useCallback(
-    (episode: RickMortyEpisode) => {
+  const handleEpisodePress = (episode: RickMortyEpisode) => {
       navigation.navigate("EpisodeDetail", { episodeId: episode.id })
-    },
-    [navigation],
-  )
+    }
 
-  // ── Render helpers ────────────────────────────────────────────────────────
-  const renderItem = useCallback(
-    ({ item }: SectionListRenderItemInfo<RickMortyEpisode, EpisodeSection>) => (
+  const renderItem = ({ item }: SectionListRenderItemInfo<RickMortyEpisode, EpisodeSection>) => (
       <EpisodeListItem episode={item} onPress={() => handleEpisodePress(item)} />
-    ),
-    [handleEpisodePress],
-  )
+    )
 
-  const renderSectionHeader = useCallback(
-    ({ section }: { section: SectionListData<RickMortyEpisode, EpisodeSection> }) => (
+  const renderSectionHeader = ({ section }: { section: SectionListData<RickMortyEpisode, EpisodeSection> }) => (
       <SectionHeader
         title={section.title as string}
         episodeCount={(section.data as RickMortyEpisode[]).length}
       />
-    ),
-    [],
-  )
+    )
 
-  const keyExtractor = useCallback((item: RickMortyEpisode) => String(item.id), [])
+  const keyExtractor = (item: RickMortyEpisode) => String(item.id)
 
-  // ── Loading skeleton ──────────────────────────────────────────────────────
   const renderSkeleton = () => (
     <View style={themed($skeletonContainer)}>
       {Array.from({ length: 10 }).map((_, i) => (
@@ -156,7 +139,6 @@ export const EpisodeListScreen: FC<EpisodeListScreenProps> = ({ navigation }) =>
     </View>
   )
 
-  // ── Error state ───────────────────────────────────────────────────────────
   const renderError = () => (
     <ErrorDisplay
       heading="Couldn't load episodes"
@@ -165,8 +147,7 @@ export const EpisodeListScreen: FC<EpisodeListScreenProps> = ({ navigation }) =>
     />
   )
 
-  // ── Empty search results ──────────────────────────────────────────────────
-  const ListEmptyComponent = useMemo(() => {
+  const ListEmptyComponent = (() => {
     if (episodesLoading || episodes.length === 0) return null
     return (
       <View style={themed($emptySearch)}>
@@ -178,12 +159,10 @@ export const EpisodeListScreen: FC<EpisodeListScreenProps> = ({ navigation }) =>
         />
       </View>
     )
-  }, [episodesLoading, episodes.length, searchQuery, themed])
+  })()
 
-  // ── Render ────────────────────────────────────────────────────────────────
   return (
     <Screen preset="fixed" safeAreaEdges={["top"]} style={themed($screen)} contentContainerStyle={$flex}>
-      {/* Header — title on left, offline chip on right */}
       <View style={themed($header)}>
         <View style={$headerRow}>
           <View style={$headerLeft}>
@@ -200,7 +179,6 @@ export const EpisodeListScreen: FC<EpisodeListScreenProps> = ({ navigation }) =>
         </View>
       </View>
 
-      {/* Search bar — sharp corners, thick border, bold text */}
       <View style={themed($searchBarOuter)}>
         <View style={themed($searchBar)}>
           <Text text="/" style={themed($searchIcon)} />
@@ -223,7 +201,6 @@ export const EpisodeListScreen: FC<EpisodeListScreenProps> = ({ navigation }) =>
         </View>
       </View>
 
-      {/* Content */}
       {episodesLoading && episodes.length === 0 ? (
         renderSkeleton()
       ) : episodesError && episodes.length === 0 ? (
@@ -256,7 +233,6 @@ export const EpisodeListScreen: FC<EpisodeListScreenProps> = ({ navigation }) =>
   )
 }
 
-// ─── Styles ───────────────────────────────────────────────────────────────────
 
 const $screen: ThemedStyle<ViewStyle> = ({ colors }) => ({
   flex: 1,

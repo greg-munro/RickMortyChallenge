@@ -2,7 +2,6 @@ import { isCacheStale, safeJsonParse } from "./cacheUtils"
 
 const ONE_HOUR_MS = 60 * 60 * 1000
 
-// ─── isCacheStale ─────────────────────────────────────────────────────────────
 
 describe("isCacheStale", () => {
   it("is stale when timestamp is null", () => {
@@ -32,7 +31,6 @@ describe("isCacheStale", () => {
   })
 })
 
-// ─── safeJsonParse ────────────────────────────────────────────────────────────
 
 describe("safeJsonParse", () => {
   it("parses a valid JSON string", () => {
