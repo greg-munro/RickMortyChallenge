@@ -1,16 +1,12 @@
 # Rick & Morty Catalog
 
-> A React Native episode browser for all 51 Rick & Morty episodes, built with Expo SDK 55 and a neo-brutalist design system.
+A React Native episode browser for all 51 Rick & Morty episodes, built with Ignite CLI starter a neo-brutalist design system.
 
-## Demos
+### Overview 
 
-**Loading**
 
-https://github.com/user-attachments/assets/b6b5723c-0a76-4832-95f7-914c2587834e
+https://github.com/user-attachments/assets/840aa07a-c4b6-4f78-8a70-ca194101b1b7
 
-**Error state**
-
-https://github.com/user-attachments/assets/4d932142-f20f-4a91-a5a8-62bd152dada6
 
 ## Features
 
@@ -20,8 +16,7 @@ https://github.com/user-attachments/assets/4d932142-f20f-4a91-a5a8-62bd152dada6
 - **Status filter chips** — multi-select Alive / Dead / Unknown filter with per-status counts
 - **Offline mode** — episodes cached with a 1-hour TTL; character data cached permanently; offline banner with animated indicator
 - **Neo-brutalist design system** — cream canvas, hard offset shadows, sharp corners, Space Grotesk typeface
-- **Reanimated 3 animations** — entrance sequences, press interactions, skeleton shimmer, custom splash screen
-- **Dark mode** — full system theme support
+- **Reanimated 4 animations** — entrance sequences, press interactions, skeleton shimmer, custom splash screen
 
 ## Tech Stack
 
