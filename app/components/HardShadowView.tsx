@@ -41,22 +41,27 @@ export function HardShadowView({
   const { theme } = useAppTheme()
   const offset = SHADOW_OFFSETS[size]
   const resolvedShadowColor = shadowColor ?? theme.colors.border
+  const $outerPadding: ViewStyle = { paddingBottom: offset, paddingRight: offset }
+  const $shadowPosition: ViewStyle = {
+    left: offset,
+    top: offset,
+    backgroundColor: resolvedShadowColor,
+  }
 
   return (
-    <View style={[{ paddingBottom: offset, paddingRight: offset }, style]}>
+    <View style={[$outerPadding, style]}>
       {/* Shadow layer — sits behind content via zIndex */}
-      <View
-        style={{
-          position: "absolute",
-          bottom: 0,
-          right: 0,
-          left: offset,
-          top: offset,
-          backgroundColor: resolvedShadowColor,
-        }}
-      />
+      <View style={[$shadowLayer, $shadowPosition]} />
       {/* Content layer */}
-      <View style={[{ position: "relative" }, contentStyle]}>{children}</View>
+      <View style={[$contentLayer, contentStyle]}>{children}</View>
     </View>
   )
 }
+
+const $shadowLayer: ViewStyle = {
+  position: "absolute",
+  bottom: 0,
+  right: 0,
+}
+
+const $contentLayer: ViewStyle = { position: "relative" }

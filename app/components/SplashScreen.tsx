@@ -19,18 +19,6 @@ interface SplashScreenProps {
   onFinish: () => void
 }
 
-/**
- * Neo-brutalist splash screen — fully Reanimated 3.
- *
- * Entrance sequence (staggered):
- *  0ms   — stripes expand width from centre
- *  200ms — headline box slams down with spring + thud scale
- *  500ms — GIF scales up + fades in
- *  700ms — tagline slides up + fades in
- *
- * Exit (after 2800ms hold):
- *  Entire screen slams down off screen.
- */
 export function SplashScreen({ onFinish }: SplashScreenProps) {
   const { themed } = useAppTheme()
   const { height: screenHeight, width: screenWidth } = useWindowDimensions()
@@ -59,10 +47,7 @@ export function SplashScreen({ onFinish }: SplashScreenProps) {
 
     // 2. Headline slams down
     headlineOpacity.value = withDelay(200, withTiming(1, { duration: 100 }))
-    headlineY.value = withDelay(
-      200,
-      withSpring(0, { damping: 12, stiffness: 200, mass: 0.8 }),
-    )
+    headlineY.value = withDelay(200, withSpring(0, { damping: 12, stiffness: 200, mass: 0.8 }))
     // Thud scale pulse on landing
     headlineScale.value = withDelay(
       380,
@@ -74,10 +59,7 @@ export function SplashScreen({ onFinish }: SplashScreenProps) {
 
     // 3. GIF scales up + fades in
     gifOpacity.value = withDelay(500, withTiming(1, { duration: 300 }))
-    gifScale.value = withDelay(
-      500,
-      withSpring(1.0, { damping: 14, stiffness: 160, mass: 0.9 }),
-    )
+    gifScale.value = withDelay(500, withSpring(1.0, { damping: 14, stiffness: 160, mass: 0.9 }))
 
     // 4. Tagline slides up + fades in
     taglineOpacity.value = withDelay(700, withTiming(1, { duration: 350 }))
@@ -89,7 +71,7 @@ export function SplashScreen({ onFinish }: SplashScreenProps) {
     // 5. Exit — slam down
     const exitDelay = setTimeout(() => {
       exitOpacity.value = withTiming(0, { duration: 300 })
-        exitY.value = withTiming(
+      exitY.value = withTiming(
         screenHeight,
         { duration: 420, easing: Easing.in(Easing.cubic) },
         (finished) => {
@@ -99,8 +81,8 @@ export function SplashScreen({ onFinish }: SplashScreenProps) {
     }, 2800)
 
     return () => clearTimeout(exitDelay)
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- Reanimated shared values are stable refs; onFinish and screenHeight are intentionally captured once on mount
   }, [])
-
 
   const $stripeAnimStyle = useAnimatedStyle(() => ({
     width: `${stripeWidth.value}%`,
@@ -108,10 +90,7 @@ export function SplashScreen({ onFinish }: SplashScreenProps) {
 
   const $headlineAnimStyle = useAnimatedStyle(() => ({
     opacity: headlineOpacity.value,
-    transform: [
-      { translateY: headlineY.value },
-      { scale: headlineScale.value },
-    ],
+    transform: [{ translateY: headlineY.value }, { scale: headlineScale.value }],
   }))
 
   const $gifAnimStyle = useAnimatedStyle(() => ({
@@ -139,9 +118,30 @@ export function SplashScreen({ onFinish }: SplashScreenProps) {
       <View style={themed($content)}>
         {/* Headline box — slams down */}
         <Animated.View style={[$headlineAnimStyle, themed($headlineBox)]}>
-          <Text text="RICK &" weight="bold" style={[themed($headline), { fontSize: headlineFontSize, lineHeight: headlineLineHeight }]} />
-          <Text text="MORTY" weight="bold" style={[themed($headline), { fontSize: headlineFontSize, lineHeight: headlineLineHeight }]} />
-          <Text text="CATALOG" weight="bold" style={[themed($headlineAccent), { fontSize: headlineFontSize, lineHeight: headlineLineHeight }]} />
+          <Text
+            text="RICK &"
+            weight="bold"
+            style={[
+              themed($headline),
+              { fontSize: headlineFontSize, lineHeight: headlineLineHeight },
+            ]}
+          />
+          <Text
+            text="MORTY"
+            weight="bold"
+            style={[
+              themed($headline),
+              { fontSize: headlineFontSize, lineHeight: headlineLineHeight },
+            ]}
+          />
+          <Text
+            text="CATALOG"
+            weight="bold"
+            style={[
+              themed($headlineAccent),
+              { fontSize: headlineFontSize, lineHeight: headlineLineHeight },
+            ]}
+          />
         </Animated.View>
 
         {/* GIF — scales up */}
@@ -249,4 +249,3 @@ const $tagline: ThemedStyle<TextStyle> = ({ colors }) => ({
   letterSpacing: 4,
   textTransform: "uppercase",
 })
-

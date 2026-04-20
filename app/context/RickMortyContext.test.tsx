@@ -1,10 +1,11 @@
-import React from "react"
+import { type ReactNode } from "react"
 import { renderHook, act, waitFor } from "@testing-library/react-native"
 import { useMMKVString } from "react-native-mmkv"
 
 import { api } from "@/services/api"
-import { load, save } from "@/utils/storage"
 import type { RickMortyCharacter, RickMortyEpisode } from "@/services/api/types"
+import { load, save } from "@/utils/storage"
+
 import { RickMortyProvider, useRickMorty } from "./RickMortyContext"
 
 jest.mock("@/services/api", () => ({
@@ -18,7 +19,6 @@ jest.mock("@/utils/storage", () => ({
   load: jest.fn(() => null),
   save: jest.fn(),
 }))
-
 
 const mockEpisode: RickMortyEpisode = {
   id: 1,
@@ -45,8 +45,7 @@ const mockCharacter: RickMortyCharacter = {
   created: "2017-11-04T18:48:46.250Z",
 }
 
-
-const wrapper = ({ children }: { children: React.ReactNode }) => (
+const wrapper = ({ children }: { children: ReactNode }) => (
   <RickMortyProvider>{children}</RickMortyProvider>
 )
 
@@ -58,7 +57,6 @@ beforeEach(() => {
   jest.mocked(load).mockReturnValue(null)
 })
 
-
 describe("useRickMorty", () => {
   it("throws when used outside RickMortyProvider", () => {
     const spy = jest.spyOn(console, "error").mockImplementation(() => {})
@@ -68,7 +66,6 @@ describe("useRickMorty", () => {
     spy.mockRestore()
   })
 })
-
 
 describe("RickMortyProvider — episodes", () => {
   it("fetches episodes from the API on mount", async () => {
@@ -123,7 +120,6 @@ describe("RickMortyProvider — episodes", () => {
     expect(result.current.episodesError).toBe("Failed to load episodes. Please try again.")
   })
 })
-
 
 describe("RickMortyProvider — characters", () => {
   it("fetches characters from the API and persists them to storage", async () => {

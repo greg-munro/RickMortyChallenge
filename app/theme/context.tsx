@@ -1,9 +1,4 @@
-import {
-  createContext,
-  PropsWithChildren,
-  useContext,
-  useEffect,
-} from "react"
+import { createContext, PropsWithChildren, useContext, useEffect } from "react"
 import { StyleProp, useColorScheme } from "react-native"
 import {
   DarkTheme as NavDarkTheme,
@@ -45,10 +40,7 @@ export interface ThemeProviderProps {
  *
  * Wrap your app in `ThemeProvider` and consume the theme with `useAppTheme()`.
  */
-export function ThemeProvider({
-  children,
-  initialContext,
-}: PropsWithChildren<ThemeProviderProps>) {
+export function ThemeProvider({ children, initialContext }: PropsWithChildren<ThemeProviderProps>) {
   // The operating system theme:
   const systemColorScheme = useColorScheme()
   // Our saved theme context: can be "light", "dark", or undefined (system theme)
@@ -61,8 +53,8 @@ export function ThemeProvider({
    *  - setThemeContextOverride(undefined) the app will follow the operating system theme.
    */
   const setThemeContextOverride = (newTheme: ThemeContextModeT) => {
-      setThemeScheme(newTheme)
-    }
+    setThemeScheme(newTheme)
+  }
 
   /**
    * initialContext is the theme context passed in from the app.tsx file and always takes precedence.
@@ -97,16 +89,16 @@ export function ThemeProvider({
   }, [theme])
 
   const themed = <T,>(styleOrStyleFn: AllowedStylesT<T>) => {
-      const flatStyles = [styleOrStyleFn].flat(3) as (ThemedStyle<T> | StyleProp<T>)[]
-      const stylesArray = flatStyles.map((f) => {
-        if (typeof f === "function") {
-          return (f as ThemedStyle<T>)(theme)
-        } else {
-          return f
-        }
-      })
-      return Object.assign({}, ...stylesArray) as T
-    }
+    const flatStyles = [styleOrStyleFn].flat(3) as (ThemedStyle<T> | StyleProp<T>)[]
+    const stylesArray = flatStyles.map((f) => {
+      if (typeof f === "function") {
+        return (f as ThemedStyle<T>)(theme)
+      } else {
+        return f
+      }
+    })
+    return Object.assign({}, ...stylesArray) as T
+  }
 
   const value = {
     navigationTheme,

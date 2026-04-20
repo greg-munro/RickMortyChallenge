@@ -38,7 +38,6 @@ const en = {
     reset: "RESET APP",
     traceTitle: "Error from %{name} stack",
   },
-
 }
 
 export default en

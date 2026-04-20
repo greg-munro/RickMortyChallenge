@@ -1,9 +1,10 @@
 import { View, ViewStyle, TextStyle } from "react-native"
 
+import type { CharacterStatus } from "@/services/api/types"
 import { useAppTheme } from "@/theme/context"
 import type { ThemedStyle } from "@/theme/types"
-import type { CharacterStatus } from "@/services/api/types"
 import { STATUS_COLORS, STATUS_LABELS } from "@/utils/characterUtils"
+
 import { Text } from "./Text"
 
 interface StatusBadgeProps {

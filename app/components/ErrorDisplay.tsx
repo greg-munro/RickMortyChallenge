@@ -1,8 +1,8 @@
 import { Image, ImageStyle, TextStyle, View, ViewStyle } from "react-native"
 
-import { Text } from "@/components/Text"
-import { NeoButton } from "@/components/NeoButton"
 import { HardShadowView } from "@/components/HardShadowView"
+import { NeoButton } from "@/components/NeoButton"
+import { Text } from "@/components/Text"
 import { useAppTheme } from "@/theme/context"
 import type { ThemedStyle } from "@/theme/types"
 
@@ -35,14 +35,8 @@ export function ErrorDisplay({
             style={$image}
             resizeMode="contain"
           />
-          <Text
-            text={heading.toUpperCase()}
-            weight="bold"
-            style={themed($heading)}
-          />
-          {!!message && (
-            <Text text={message} size="sm" weight="medium" style={themed($message)} />
-          )}
+          <Text text={heading.toUpperCase()} weight="bold" style={themed($heading)} />
+          {!!message && <Text text={message} size="sm" weight="medium" style={themed($message)} />}
           {!!onAction && (
             <NeoButton
               label={actionLabel}

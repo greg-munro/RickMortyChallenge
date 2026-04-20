@@ -33,10 +33,7 @@ export function SkeletonLoader({
   const opacity = useSharedValue(0.15)
 
   opacity.value = withRepeat(
-    withSequence(
-      withTiming(0.45, { duration: 600 }),
-      withTiming(0.15, { duration: 600 }),
-    ),
+    withSequence(withTiming(0.45, { duration: 600 }), withTiming(0.15, { duration: 600 })),
     -1,
     false,
   )
@@ -44,9 +41,7 @@ export function SkeletonLoader({
   const animStyle = useAnimatedStyle(() => ({ opacity: opacity.value }))
 
   return (
-    <Animated.View
-      style={[themed($skeleton), { width, height, borderRadius }, animStyle, style]}
-    />
+    <Animated.View style={[themed($skeleton), { width, height, borderRadius }, animStyle, style]} />
   )
 }
 

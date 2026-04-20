@@ -2,6 +2,7 @@ import { View, ViewStyle, TextStyle } from "react-native"
 
 import { useAppTheme } from "@/theme/context"
 import type { ThemedStyle } from "@/theme/types"
+
 import { Text } from "./Text"
 
 interface SectionHeaderProps {

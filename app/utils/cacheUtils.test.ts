@@ -2,7 +2,6 @@ import { isCacheStale, safeJsonParse } from "./cacheUtils"
 
 const ONE_HOUR_MS = 60 * 60 * 1000
 
-
 describe("isCacheStale", () => {
   it("is stale when timestamp is null", () => {
     expect(isCacheStale(null)).toBe(true)
@@ -30,7 +29,6 @@ describe("isCacheStale", () => {
     expect(isCacheStale(sixMinutesAgo, fiveMinutesMs)).toBe(true)
   })
 })
-
 
 describe("safeJsonParse", () => {
   it("parses a valid JSON string", () => {

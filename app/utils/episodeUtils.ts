@@ -1,6 +1,6 @@
-import type { RickMortyEpisode } from "@/services/api/types"
 import { SectionListData } from "react-native"
 
+import type { RickMortyEpisode } from "@/services/api/types"
 
 export interface ParsedEpisodeCode {
   season: number
@@ -15,7 +15,6 @@ export interface EpisodeSection {
   season: number
   data: RickMortyEpisode[]
 }
-
 
 /**
  * Parses an episode code string (e.g. "S01E01") into its component parts.
@@ -37,7 +36,6 @@ export function parseEpisodeCode(code: string): ParsedEpisodeCode | null {
 export function seasonLabel(season: number): string {
   return `Season ${season}`
 }
-
 
 /**
  * Groups a flat array of episodes into sections by season, sorted ascending.
@@ -73,7 +71,6 @@ export function groupEpisodesBySeason(
       data,
     }))
 }
-
 
 /**
  * Extracts numeric character IDs from the array of full character URLs

@@ -9,9 +9,10 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated"
 
+import type { RickMortyCharacter } from "@/services/api/types"
 import { useAppTheme } from "@/theme/context"
 import type { ThemedStyle } from "@/theme/types"
-import type { RickMortyCharacter } from "@/services/api/types"
+
 import { HardShadowView } from "./HardShadowView"
 import { SkeletonLoader } from "./SkeletonLoader"
 import { StatusBadge } from "./StatusBadge"
@@ -45,18 +46,14 @@ export function CharacterCard({ character, index = 0 }: CharacterCardProps) {
     const delay = Math.min(index, MAX_STAGGER_INDEX) * STAGGER_MS
     opacity.value = withDelay(delay, withTiming(1, { duration: 250 }))
     translateY.value = withDelay(delay, withTiming(0, { duration: 250 }))
-    scale.value = withDelay(
-      delay,
-      withSpring(1, { damping: 14, stiffness: 180, mass: 0.7 }),
-    )
+    scale.value = withDelay(delay, withSpring(1, { damping: 14, stiffness: 180, mass: 0.7 }))
+    // Reanimated shared values are stable refs and index is intentionally captured at mount
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const animStyle = useAnimatedStyle(() => ({
     opacity: opacity.value,
-    transform: [
-      { scale: scale.value },
-      { translateY: translateY.value },
-    ],
+    transform: [{ scale: scale.value }, { translateY: translateY.value }],
   }))
 
   return (
@@ -73,12 +70,7 @@ export function CharacterCard({ character, index = 0 }: CharacterCardProps) {
               onLoadEnd={() => setImageLoading(false)}
             />
             {imageLoading && (
-              <SkeletonLoader
-                width="100%"
-                height={1}
-                borderRadius={0}
-                style={$imageSkeleton}
-              />
+              <SkeletonLoader width="100%" height={1} borderRadius={0} style={$imageSkeleton} />
             )}
           </View>
           <View style={themed($info)}>

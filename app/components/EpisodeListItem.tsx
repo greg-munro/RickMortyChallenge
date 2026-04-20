@@ -1,3 +1,4 @@
+import { View, ViewStyle, TextStyle } from "react-native"
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
@@ -5,11 +6,11 @@ import Animated, {
   withTiming,
   runOnJS,
 } from "react-native-reanimated"
-import { View, ViewStyle, TextStyle } from "react-native"
 
+import type { RickMortyEpisode } from "@/services/api/types"
 import { useAppTheme } from "@/theme/context"
 import type { ThemedStyle } from "@/theme/types"
-import type { RickMortyEpisode } from "@/services/api/types"
+
 import { Text } from "./Text"
 
 interface EpisodeListItemProps {
@@ -61,12 +62,7 @@ export function EpisodeListItem({ episode, onPress }: EpisodeListItemProps) {
     >
       {/* Episode code badge — yellow, sharp corners, black border */}
       <View style={themed($badge)}>
-        <Text
-          text={episode.episode}
-          size="xs"
-          weight="bold"
-          style={themed($badgeText)}
-        />
+        <Text text={episode.episode} size="xs" weight="bold" style={themed($badgeText)} />
       </View>
 
       {/* Text block */}

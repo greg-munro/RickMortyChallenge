@@ -1,11 +1,8 @@
 import { StyleProp, TextStyle, ViewStyle } from "react-native"
-import Animated, {
-  useAnimatedStyle,
-  useSharedValue,
-  withTiming,
-} from "react-native-reanimated"
+import Animated, { useAnimatedStyle, useSharedValue, withTiming } from "react-native-reanimated"
 
 import { useAppTheme } from "@/theme/context"
+
 import { HardShadowView, HardShadowSize } from "./HardShadowView"
 import { Text } from "./Text"
 
@@ -71,24 +68,28 @@ export function NeoButton({
   const textColor = VARIANT_TEXT_COLOR[variant]
   const borderColor = theme.colors.border
 
+  const $buttonFace: ViewStyle = {
+    backgroundColor: bg,
+    borderWidth: 3,
+    borderColor,
+    paddingHorizontal: theme.spacing.lg,
+    paddingVertical: theme.spacing.sm,
+    alignItems: "center",
+    justifyContent: "center",
+    opacity: disabled ? 0.5 : 1,
+  }
+
+  const $buttonLabel: TextStyle = {
+    color: textColor,
+    fontFamily: theme.typography.primary.bold,
+    letterSpacing: 2,
+    textTransform: "uppercase",
+  }
+
   return (
     <HardShadowView size={shadowSize} style={style}>
       <Animated.View
-        style={[
-          animStyle,
-          {
-            backgroundColor: bg,
-            borderWidth: 3,
-            borderColor,
-            paddingHorizontal: theme.spacing.lg,
-            paddingVertical: theme.spacing.sm,
-            alignItems: "center",
-            justifyContent: "center",
-            opacity: disabled ? 0.5 : 1,
-          },
-        ]}
-        // Animated.View doesn't have onStartShouldSetResponder natively,
-        // so we use the responder props directly.
+        style={[animStyle, $buttonFace]}
         onStartShouldSetResponder={() => !disabled}
         onResponderGrant={handlePressIn}
         onResponderRelease={handlePressOut}
@@ -96,19 +97,7 @@ export function NeoButton({
           pressed.value = 0
         }}
       >
-        <Text
-          text={label}
-          size="xs"
-          style={[
-            {
-              color: textColor,
-              fontFamily: theme.typography.primary.bold,
-              letterSpacing: 2,
-              textTransform: "uppercase",
-            } as TextStyle,
-            labelStyle,
-          ]}
-        />
+        <Text text={label} size="xs" style={[$buttonLabel, labelStyle]} />
       </Animated.View>
     </HardShadowView>
   )

@@ -1,5 +1,5 @@
-import { renderHook, act } from "@testing-library/react-native"
 import NetInfo from "@react-native-community/netinfo"
+import { renderHook, act } from "@testing-library/react-native"
 
 import { useOfflineStatus } from "./useOfflineStatus"
 
@@ -13,7 +13,6 @@ beforeEach(() => {
   mockNetInfo.fetch.mockResolvedValue({ isConnected: true, isInternetReachable: true })
   mockNetInfo.addEventListener.mockReturnValue(jest.fn())
 })
-
 
 describe("useOfflineStatus", () => {
   it("returns false initially (online assumed until proven otherwise)", () => {
@@ -43,7 +42,9 @@ describe("useOfflineStatus", () => {
   })
 
   it("updates reactively when the network state changes via the event listener", async () => {
-    let capturedListener: ((state: { isConnected: boolean; isInternetReachable: boolean | null }) => void) | null = null
+    let capturedListener:
+      | ((state: { isConnected: boolean; isInternetReachable: boolean | null }) => void)
+      | null = null
     mockNetInfo.addEventListener.mockImplementation((listener: typeof capturedListener) => {
       capturedListener = listener
       return jest.fn()

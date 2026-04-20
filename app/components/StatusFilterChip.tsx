@@ -1,14 +1,11 @@
 import { TextStyle, View, ViewStyle } from "react-native"
-import Animated, {
-  useAnimatedStyle,
-  useSharedValue,
-  withTiming,
-} from "react-native-reanimated"
+import Animated, { useAnimatedStyle, useSharedValue, withTiming } from "react-native-reanimated"
 
+import type { CharacterStatus } from "@/services/api/types"
 import { useAppTheme } from "@/theme/context"
 import type { ThemedStyle } from "@/theme/types"
-import type { CharacterStatus } from "@/services/api/types"
 import { STATUS_COLORS, STATUS_LABELS } from "@/utils/characterUtils"
+
 import { HardShadowView } from "./HardShadowView"
 import { Text } from "./Text"
 
@@ -33,6 +30,13 @@ export function StatusFilterChip({ status, count, isSelected, onPress }: StatusF
   const label = STATUS_LABELS[status]
   const OFFSET = 4
 
+  const $chipBorderWidth: ViewStyle = { borderWidth: isSelected ? 3 : 2 }
+  const $chipBackground: ViewStyle = {
+    backgroundColor: isSelected ? color : theme.colors.palette.white,
+  }
+  const $badgeSelectedBg: ViewStyle = { backgroundColor: theme.colors.palette.white }
+  const $countTextSelectedColor: TextStyle = { color: theme.colors.palette.ink }
+
   const pressed = useSharedValue(0)
 
   const animStyle = useAnimatedStyle(() => ({
@@ -43,19 +47,9 @@ export function StatusFilterChip({ status, count, isSelected, onPress }: StatusF
   }))
 
   return (
-    <HardShadowView
-      size="sm"
-      shadowColor={isSelected ? theme.colors.border : "transparent"}
-    >
+    <HardShadowView size="sm" shadowColor={isSelected ? theme.colors.border : "transparent"}>
       <Animated.View
-        style={[
-          themed($chip),
-          {
-            backgroundColor: isSelected ? color : theme.colors.palette.white,
-            borderWidth: isSelected ? 3 : 2,
-          },
-          animStyle,
-        ]}
+        style={[themed($chip), $chipBackground, $chipBorderWidth, animStyle]}
         onStartShouldSetResponder={() => true}
         onResponderGrant={() => {
           pressed.value = 1
@@ -74,18 +68,12 @@ export function StatusFilterChip({ status, count, isSelected, onPress }: StatusF
           weight="bold"
           style={[themed($label), isSelected && themed($labelSelected)]}
         />
-        <View style={[
-          themed($countBadge),
-          isSelected && { backgroundColor: theme.colors.palette.white },
-        ]}>
+        <View style={[themed($countBadge), isSelected && $badgeSelectedBg]}>
           <Text
             text={String(count)}
             size="xs"
             weight="bold"
-            style={[
-              themed($countText),
-              isSelected && { color: theme.colors.palette.ink },
-            ]}
+            style={[themed($countText), isSelected && $countTextSelectedColor]}
           />
         </View>
       </Animated.View>

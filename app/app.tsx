@@ -6,24 +6,24 @@ if (__DEV__) {
   require("./devtools/ReactotronConfig.ts")
 }
 import "./utils/gestureHandler"
+
+import { useEffect, useState } from "react"
+import { useFonts } from "expo-font"
+import * as Linking from "expo-linking"
 import NetInfo from "@react-native-community/netinfo"
+import i18n from "i18next"
+import { KeyboardProvider } from "react-native-keyboard-controller"
+import { initialWindowMetrics, SafeAreaProvider } from "react-native-safe-area-context"
 
 NetInfo.configure({
   useNativeReachability: false,
 })
 
-import { useEffect, useState } from "react"
-import { useFonts } from "expo-font"
-import * as Linking from "expo-linking"
-import { KeyboardProvider } from "react-native-keyboard-controller"
-import { initialWindowMetrics, SafeAreaProvider } from "react-native-safe-area-context"
-
-import i18n from "i18next"
+import { SplashScreen } from "./components/SplashScreen"
 import { RickMortyProvider } from "./context/RickMortyContext"
 import { initI18n } from "./i18n"
 import { AppNavigator } from "./navigators/AppNavigator"
 import { useNavigationPersistence } from "./navigators/navigationUtilities"
-import { SplashScreen } from "./components/SplashScreen"
 import { ThemeProvider } from "./theme/context"
 import { customFontsToLoad } from "./theme/typography"
 import * as storage from "./utils/storage"

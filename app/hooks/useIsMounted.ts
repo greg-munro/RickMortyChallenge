@@ -1,3 +1,7 @@
+/**
+ * Avoids setting state on an unmounted component.
+ * Returns a function that can be called to check if the component is still mounted.
+ */
 import { useEffect, useRef } from "react"
 
 export function useIsMounted() {

@@ -5,7 +5,7 @@ import "intl-pluralrules"
 
 import en, { Translations } from "./en"
 
-export let isRTL = false
+export const isRTL = false
 I18nManager.allowRTL(false)
 
 export const initI18n = async () => {

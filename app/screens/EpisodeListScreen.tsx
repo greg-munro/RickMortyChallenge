@@ -1,4 +1,15 @@
 import { useEffect, useRef, useState } from "react"
+import {
+  RefreshControl,
+  SectionList,
+  SectionListData,
+  SectionListRenderItemInfo,
+  TextStyle,
+  TouchableOpacity,
+  useWindowDimensions,
+  View,
+  ViewStyle,
+} from "react-native"
 import NetInfo from "@react-native-community/netinfo"
 import Animated, {
   useAnimatedStyle,
@@ -7,32 +18,21 @@ import Animated, {
   withSpring,
   withTiming,
 } from "react-native-reanimated"
-import {
-  RefreshControl,
-  SectionList,
-  SectionListData,
-  SectionListRenderItemInfo,
-  TextInput,
-  TextStyle,
-  TouchableOpacity,
-  useWindowDimensions,
-  View,
-  ViewStyle,
-} from "react-native"
 
+import { EpisodeListItem } from "@/components/EpisodeListItem"
+import { ErrorDisplay } from "@/components/ErrorDisplay"
+import { Screen } from "@/components/Screen"
+import { SectionHeader } from "@/components/SectionHeader"
+import { SkeletonLoader } from "@/components/SkeletonLoader"
+import { Text } from "@/components/Text"
+import { TextField } from "@/components/TextField"
 import { useRickMorty } from "@/context/RickMortyContext"
+import { useOfflineStatus } from "@/hooks/useOfflineStatus"
 import type { AppStackScreenProps } from "@/navigators/navigationTypes"
 import type { RickMortyEpisode } from "@/services/api/types"
 import { useAppTheme } from "@/theme/context"
 import type { ThemedStyle } from "@/theme/types"
 import { groupEpisodesBySeason, EpisodeSection } from "@/utils/episodeUtils"
-import { useOfflineStatus } from "@/hooks/useOfflineStatus"
-import { EpisodeListItem } from "@/components/EpisodeListItem"
-import { SectionHeader } from "@/components/SectionHeader"
-import { SkeletonLoader } from "@/components/SkeletonLoader"
-import { ErrorDisplay } from "@/components/ErrorDisplay"
-import { Text } from "@/components/Text"
-import { Screen } from "@/components/Screen"
 
 interface EpisodeListScreenProps extends AppStackScreenProps<"EpisodeList"> {}
 
@@ -41,6 +41,8 @@ export function EpisodeListScreen({ navigation }: EpisodeListScreenProps) {
   const { themed, theme } = useAppTheme()
   const isOffline = useOfflineStatus()
   const { width: windowWidth } = useWindowDimensions()
+
+  const $headerTitleResponsive: TextStyle = { fontSize: windowWidth < 380 ? 26 : 32 }
 
   const [searchQuery, setSearchQuery] = useState("")
   const [debouncedQuery, setDebouncedQuery] = useState("")
@@ -63,6 +65,8 @@ export function EpisodeListScreen({ navigation }: EpisodeListScreenProps) {
       chipScale.value = withTiming(0, { duration: 180 })
       chipOpacity.value = withTiming(0, { duration: 180 })
     }
+    // Reanimated shared values are stable refs
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOffline])
 
   const triggerChipShake = () => {
@@ -106,22 +110,27 @@ export function EpisodeListScreen({ navigation }: EpisodeListScreenProps) {
           ep.episode.toLowerCase().includes(debouncedQuery),
       )
     : episodes
-  const sections: SectionListData<RickMortyEpisode, EpisodeSection>[] = groupEpisodesBySeason(filtered)
+  const sections: SectionListData<RickMortyEpisode, EpisodeSection>[] =
+    groupEpisodesBySeason(filtered)
 
   const handleEpisodePress = (episode: RickMortyEpisode) => {
-      navigation.navigate("EpisodeDetail", { episodeId: episode.id })
-    }
+    navigation.navigate("EpisodeDetail", { episodeId: episode.id })
+  }
 
   const renderItem = ({ item }: SectionListRenderItemInfo<RickMortyEpisode, EpisodeSection>) => (
-      <EpisodeListItem episode={item} onPress={() => handleEpisodePress(item)} />
-    )
+    <EpisodeListItem episode={item} onPress={() => handleEpisodePress(item)} />
+  )
 
-  const renderSectionHeader = ({ section }: { section: SectionListData<RickMortyEpisode, EpisodeSection> }) => (
-      <SectionHeader
-        title={section.title as string}
-        episodeCount={(section.data as RickMortyEpisode[]).length}
-      />
-    )
+  const renderSectionHeader = ({
+    section,
+  }: {
+    section: SectionListData<RickMortyEpisode, EpisodeSection>
+  }) => (
+    <SectionHeader
+      title={section.title as string}
+      episodeCount={(section.data as RickMortyEpisode[]).length}
+    />
+  )
 
   const keyExtractor = (item: RickMortyEpisode) => String(item.id)
 
@@ -132,7 +141,12 @@ export function EpisodeListScreen({ navigation }: EpisodeListScreenProps) {
           <SkeletonLoader width={56} height={28} borderRadius={0} />
           <View style={$skeletonTextBlock}>
             <SkeletonLoader width="70%" height={14} borderRadius={0} />
-            <SkeletonLoader width="45%" height={11} borderRadius={0} style={themed($skeletonSecondLine)} />
+            <SkeletonLoader
+              width="45%"
+              height={11}
+              borderRadius={0}
+              style={themed($skeletonSecondLine)}
+            />
           </View>
         </View>
       ))}
@@ -162,14 +176,19 @@ export function EpisodeListScreen({ navigation }: EpisodeListScreenProps) {
   }
 
   return (
-    <Screen preset="fixed" safeAreaEdges={["top"]} style={themed($screen)} contentContainerStyle={$flex}>
+    <Screen
+      preset="fixed"
+      safeAreaEdges={["top"]}
+      style={themed($screen)}
+      contentContainerStyle={$flex}
+    >
       <View style={themed($header)}>
         <View style={$headerRow}>
           <View style={$headerLeft}>
             <Text
               preset="heading"
               tx="episodeListScreen:title"
-              style={[themed($headerTitle), { fontSize: windowWidth < 380 ? 26 : 32 }]}
+              style={[themed($headerTitle), $headerTitleResponsive]}
             />
             <View style={themed($headerUnderline)} />
           </View>
@@ -182,7 +201,7 @@ export function EpisodeListScreen({ navigation }: EpisodeListScreenProps) {
       <View style={themed($searchBarOuter)}>
         <View style={themed($searchBar)}>
           <Text text="/" style={themed($searchIcon)} />
-          <TextInput
+          <TextField
             style={themed($searchInput)}
             placeholder="SEARCH EPISODES..."
             placeholderTextColor={theme.colors.text + "55"}
@@ -232,7 +251,6 @@ export function EpisodeListScreen({ navigation }: EpisodeListScreenProps) {
     </Screen>
   )
 }
-
 
 const $screen: ThemedStyle<ViewStyle> = ({ colors }) => ({
   flex: 1,

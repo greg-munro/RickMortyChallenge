@@ -1,8 +1,8 @@
 import { ErrorInfo } from "react"
 import { ViewStyle } from "react-native"
 
-import { Screen } from "@/components/Screen"
 import { ErrorDisplay } from "@/components/ErrorDisplay"
+import { Screen } from "@/components/Screen"
 import { useAppTheme } from "@/theme/context"
 import type { ThemedStyle } from "@/theme/types"
 

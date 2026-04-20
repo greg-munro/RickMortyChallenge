@@ -3,27 +3,18 @@ import { ApiResponse, ApisauceInstance, create } from "apisauce"
 import Config from "@/config"
 
 import { GeneralApiProblem, getGeneralApiProblem } from "./apiProblem"
-import type {
-  ApiConfig,
-  PaginatedResponse,
-  RickMortyCharacter,
-  RickMortyEpisode,
-} from "./types"
+import type { ApiConfig, PaginatedResponse, RickMortyCharacter, RickMortyEpisode } from "./types"
 
 export const DEFAULT_API_CONFIG: ApiConfig = {
   url: Config.API_URL,
   timeout: 10000,
 }
 
-
-export type GetEpisodesResult =
-  | { kind: "ok"; episodes: RickMortyEpisode[] }
-  | GeneralApiProblem
+export type GetEpisodesResult = { kind: "ok"; episodes: RickMortyEpisode[] } | GeneralApiProblem
 
 export type GetCharactersResult =
   | { kind: "ok"; characters: RickMortyCharacter[] }
   | GeneralApiProblem
-
 
 /**
  * Manages all requests to the Rick and Morty API.
@@ -52,8 +43,10 @@ export class Api {
   async getAllEpisodes(): Promise<GetEpisodesResult> {
     try {
       // Fetch the first page to discover total page count
-      const firstPage: ApiResponse<PaginatedResponse<RickMortyEpisode>> =
-        await this.apisauce.get("episode", { page: 1 })
+      const firstPage: ApiResponse<PaginatedResponse<RickMortyEpisode>> = await this.apisauce.get(
+        "episode",
+        { page: 1 },
+      )
 
       if (!firstPage.ok) {
         const problem = getGeneralApiProblem(firstPage)
@@ -69,10 +62,7 @@ export class Api {
       }
 
       // Fetch remaining pages in parallel
-      const remainingPageNumbers = Array.from(
-        { length: totalPages - 1 },
-        (_, i) => i + 2,
-      )
+      const remainingPageNumbers = Array.from({ length: totalPages - 1 }, (_, i) => i + 2)
 
       const remainingResponses = await Promise.all(
         remainingPageNumbers.map((page) =>

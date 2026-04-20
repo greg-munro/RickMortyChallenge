@@ -1,4 +1,5 @@
 import type { RickMortyEpisode } from "@/services/api/types"
+
 import {
   parseEpisodeCode,
   seasonLabel,
@@ -15,7 +16,6 @@ const makeEpisode = (id: number, episode: string): RickMortyEpisode => ({
   url: `https://rickandmortyapi.com/api/episode/${id}`,
   created: "2017-11-10T12:56:33.798Z",
 })
-
 
 describe("parseEpisodeCode", () => {
   it("parses a valid uppercase code", () => {
@@ -39,7 +39,6 @@ describe("parseEpisodeCode", () => {
   })
 })
 
-
 describe("seasonLabel", () => {
   it("returns a human-readable label", () => {
     expect(seasonLabel(1)).toBe("Season 1")
@@ -47,18 +46,13 @@ describe("seasonLabel", () => {
   })
 })
 
-
 describe("groupEpisodesBySeason", () => {
   it("returns an empty array when given no episodes", () => {
     expect(groupEpisodesBySeason([])).toEqual([])
   })
 
   it("groups episodes into the correct season buckets", () => {
-    const episodes = [
-      makeEpisode(1, "S01E01"),
-      makeEpisode(2, "S01E02"),
-      makeEpisode(3, "S02E01"),
-    ]
+    const episodes = [makeEpisode(1, "S01E01"), makeEpisode(2, "S01E02"), makeEpisode(3, "S02E01")]
     const sections = groupEpisodesBySeason(episodes)
     expect(sections).toHaveLength(2)
     expect(sections[0].season).toBe(1)
@@ -68,21 +62,13 @@ describe("groupEpisodesBySeason", () => {
   })
 
   it("sorts seasons in ascending order", () => {
-    const episodes = [
-      makeEpisode(3, "S03E01"),
-      makeEpisode(1, "S01E01"),
-      makeEpisode(2, "S02E01"),
-    ]
+    const episodes = [makeEpisode(3, "S03E01"), makeEpisode(1, "S01E01"), makeEpisode(2, "S02E01")]
     const sections = groupEpisodesBySeason(episodes)
     expect(sections.map((s) => s.season)).toEqual([1, 2, 3])
   })
 
   it("sorts episodes within a season by episode number", () => {
-    const episodes = [
-      makeEpisode(3, "S01E03"),
-      makeEpisode(1, "S01E01"),
-      makeEpisode(2, "S01E02"),
-    ]
+    const episodes = [makeEpisode(3, "S01E03"), makeEpisode(1, "S01E01"), makeEpisode(2, "S01E02")]
     const sections = groupEpisodesBySeason(episodes)
     expect(sections[0].data.map((ep) => ep.id)).toEqual([1, 2, 3])
   })
@@ -92,7 +78,6 @@ describe("groupEpisodesBySeason", () => {
     expect(sections[0].title).toBe("Season 2")
   })
 })
-
 
 describe("extractCharacterIds", () => {
   it("extracts numeric IDs from full API URLs", () => {

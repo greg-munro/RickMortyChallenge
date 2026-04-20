@@ -3,7 +3,6 @@
  * https://rickandmortyapi.com/documentation/#rest
  */
 
-
 export interface PaginationInfo {
   count: number
   pages: number
@@ -15,7 +14,6 @@ export interface PaginatedResponse<T> {
   info: PaginationInfo
   results: T[]
 }
-
 
 export interface RickMortyEpisode {
   id: number
@@ -29,7 +27,6 @@ export interface RickMortyEpisode {
   url: string
   created: string
 }
-
 
 export type CharacterStatus = "Alive" | "Dead" | "unknown"
 export type CharacterGender = "Female" | "Male" | "Genderless" | "unknown"
@@ -56,11 +53,9 @@ export interface RickMortyCharacter {
   created: string
 }
 
-
 export interface ApiConfig {
   /** Base URL for the API */
   url: string
   /** Milliseconds before we timeout the request */
   timeout: number
 }
-

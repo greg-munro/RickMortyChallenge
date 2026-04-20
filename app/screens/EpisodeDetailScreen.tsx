@@ -17,17 +17,17 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated"
 
+import { CharacterCard } from "@/components/CharacterCard"
+import { ErrorDisplay } from "@/components/ErrorDisplay"
+import { Screen } from "@/components/Screen"
+import { SkeletonLoader } from "@/components/SkeletonLoader"
+import { StatusFilterChip } from "@/components/StatusFilterChip"
+import { Text } from "@/components/Text"
 import { useRickMorty } from "@/context/RickMortyContext"
 import type { AppStackScreenProps } from "@/navigators/navigationTypes"
 import type { CharacterStatus, RickMortyCharacter } from "@/services/api/types"
 import { useAppTheme } from "@/theme/context"
 import type { ThemedStyle } from "@/theme/types"
-import { CharacterCard } from "@/components/CharacterCard"
-import { SkeletonLoader } from "@/components/SkeletonLoader"
-import { ErrorDisplay } from "@/components/ErrorDisplay"
-import { StatusFilterChip } from "@/components/StatusFilterChip"
-import { Text } from "@/components/Text"
-import { Screen } from "@/components/Screen"
 import { STATUS_ORDER } from "@/utils/characterUtils"
 
 interface EpisodeDetailScreenProps extends AppStackScreenProps<"EpisodeDetail"> {}
@@ -41,9 +41,13 @@ export function EpisodeDetailScreen({ navigation, route }: EpisodeDetailScreenPr
     charactersError,
     fetchCharactersForEpisode,
   } = useRickMorty()
-  const { themed, theme } = useAppTheme()
+  const { themed } = useAppTheme()
   const { width: windowWidth } = useWindowDimensions()
   const cardImageSize = Math.round((windowWidth - 16 - 8) / 2)
+  const $episodeTitleResponsive: TextStyle = {
+    fontSize: windowWidth < 380 ? 22 : 28,
+    lineHeight: windowWidth < 380 ? 26 : 32,
+  }
 
   const [activeFilters, setActiveFilters] = useState<Set<CharacterStatus>>(new Set())
 
@@ -77,10 +81,14 @@ export function EpisodeDetailScreen({ navigation, route }: EpisodeDetailScreenPr
     // Reset chip animation when episode changes
     chipRowX.value = -60
     chipRowOpacity.value = 0
+    // Reanimated shared values are stable refs; episodeId is the intentional dep
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [episodeId])
 
   useEffect(() => {
     if (episode) fetchCharactersForEpisode(episode)
+    // episode is derived from episodeId; fetchCharactersForEpisode is a stable context fn
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [episodeId])
 
   const statusCounts = new Map<CharacterStatus, number>()
@@ -98,6 +106,8 @@ export function EpisodeDetailScreen({ navigation, route }: EpisodeDetailScreenPr
       chipRowOpacity.value = withDelay(100, withTiming(1, { duration: 300 }))
       chipRowX.value = withDelay(100, withSpring(0, { damping: 16, stiffness: 180, mass: 0.8 }))
     }
+    // Reanimated shared values are stable refs
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [availableStatuses.length])
 
   const filteredCharacters =
@@ -141,10 +151,7 @@ export function EpisodeDetailScreen({ navigation, route }: EpisodeDetailScreenPr
       <Text
         text={episode.name.toUpperCase()}
         weight="bold"
-        style={[themed($episodeTitle), {
-          fontSize: windowWidth < 380 ? 22 : 28,
-          lineHeight: windowWidth < 380 ? 26 : 32,
-        }]}
+        style={[themed($episodeTitle), $episodeTitleResponsive]}
         numberOfLines={3}
       />
 
@@ -249,7 +256,6 @@ export function EpisodeDetailScreen({ navigation, route }: EpisodeDetailScreenPr
     </Screen>
   )
 }
-
 
 const $screen: ThemedStyle<ViewStyle> = ({ colors }) => ({
   flex: 1,

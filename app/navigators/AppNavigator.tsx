@@ -1,7 +1,3 @@
-/**
- * The app navigator is the primary navigation stack for RickMortyChallenge.
- * It contains two screens: the episode list and the episode detail.
- */
 import { NavigationContainer } from "@react-navigation/native"
 import { createNativeStackNavigator } from "@react-navigation/native-stack"
 
