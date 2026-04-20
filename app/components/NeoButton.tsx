@@ -6,7 +6,7 @@ import { useAppTheme } from "@/theme/context"
 import { HardShadowView, HardShadowSize } from "./HardShadowView"
 import { Text } from "./Text"
 
-export type NeoButtonVariant = "primary" | "secondary" | "outline"
+type NeoButtonVariant = "primary" | "secondary" | "outline"
 
 interface NeoButtonProps {
   label: string

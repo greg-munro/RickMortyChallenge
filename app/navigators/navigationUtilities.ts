@@ -165,7 +165,7 @@ export function useNavigationPersistence(storage: Storage, persistenceKey: strin
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  return { onNavigationStateChange, restoreState, isRestored, initialNavigationState }
+  return { onNavigationStateChange, isRestored, initialNavigationState }
 }
 
 /**

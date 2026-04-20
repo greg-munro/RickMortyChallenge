@@ -1,9 +1,10 @@
 import type { CharacterStatus } from "@/services/api/types"
+import { colors } from "@/theme/colors"
 
 export const STATUS_COLORS: Record<CharacterStatus, string> = {
-  Alive: "#55CC44",
-  Dead: "#D63D2E",
-  unknown: "#9E9E9E",
+  Alive: colors.palette.statusAlive,
+  Dead: colors.palette.statusDead,
+  unknown: colors.palette.statusUnknown,
 }
 
 export const STATUS_LABELS: Record<CharacterStatus, string> = {

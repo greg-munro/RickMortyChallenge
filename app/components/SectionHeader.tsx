@@ -56,7 +56,7 @@ const $badge: ThemedStyle<ViewStyle> = ({ colors, spacing }) => ({
   borderWidth: 2,
   borderColor: colors.palette.ink,
   paddingHorizontal: spacing.xs,
-  paddingVertical: 2,
+  paddingVertical: spacing.xxxs,
 })
 
 const $badgeText: ThemedStyle<TextStyle> = ({ colors }) => ({

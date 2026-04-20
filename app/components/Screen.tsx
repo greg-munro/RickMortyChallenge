@@ -19,7 +19,7 @@ import {
 import { ExtendedEdge, useSafeAreaInsetsStyle } from "@/hooks/useSafeAreaInsetsStyle"
 import { useAppTheme } from "@/theme/context"
 
-export const DEFAULT_BOTTOM_OFFSET = 50
+const DEFAULT_BOTTOM_OFFSET = 50
 
 interface BaseScreenProps {
   /**

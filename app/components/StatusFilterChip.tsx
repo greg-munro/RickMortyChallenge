@@ -81,10 +81,17 @@ export function StatusFilterChip({ status, count, isSelected, onPress }: StatusF
   )
 }
 
+const CHIP_GAP = 6
+const BADGE_PADDING_H = 5
+const BADGE_PADDING_V = 1
+const BADGE_MIN_WIDTH = 20
+const COUNT_FONT_SIZE = 12
+const COUNT_LINE_HEIGHT = 18
+
 const $chip: ThemedStyle<ViewStyle> = ({ colors, spacing }) => ({
   flexDirection: "row",
   alignItems: "center",
-  gap: 6,
+  gap: CHIP_GAP,
   borderColor: colors.border,
   paddingHorizontal: spacing.sm,
   paddingVertical: spacing.xxxs + 2,
@@ -101,16 +108,16 @@ const $labelSelected: ThemedStyle<TextStyle> = ({ colors }) => ({
 
 const $countBadge: ThemedStyle<ViewStyle> = ({ colors }) => ({
   backgroundColor: colors.palette.ink,
-  paddingHorizontal: 5,
-  paddingVertical: 1,
-  minWidth: 20,
+  paddingHorizontal: BADGE_PADDING_H,
+  paddingVertical: BADGE_PADDING_V,
+  minWidth: BADGE_MIN_WIDTH,
   alignItems: "center",
 })
 
 const $countText: ThemedStyle<TextStyle> = ({ colors }) => ({
   color: colors.palette.white,
-  fontSize: 12,
-  lineHeight: 18,
+  fontSize: COUNT_FONT_SIZE,
+  lineHeight: COUNT_LINE_HEIGHT,
   fontWeight: "700",
   letterSpacing: 0.5,
 })

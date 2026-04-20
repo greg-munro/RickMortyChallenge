@@ -2,7 +2,7 @@ import { SectionListData } from "react-native"
 
 import type { RickMortyEpisode } from "@/services/api/types"
 
-export interface ParsedEpisodeCode {
+interface ParsedEpisodeCode {
   season: number
   episode: number
   /** e.g. "S01E01" */

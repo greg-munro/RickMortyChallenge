@@ -9,6 +9,7 @@ import Animated, {
 
 import type { RickMortyEpisode } from "@/services/api/types"
 import { useAppTheme } from "@/theme/context"
+import { spacing } from "@/theme/spacing"
 import type { ThemedStyle } from "@/theme/types"
 
 import { Text } from "./Text"
@@ -117,7 +118,7 @@ const $badgeText: ThemedStyle<TextStyle> = ({ colors }) => ({
 
 const $textBlock: ViewStyle = {
   flex: 1,
-  gap: 2,
+  gap: spacing.xxxs,
 }
 
 const $episodeName: ThemedStyle<TextStyle> = ({ colors }) => ({

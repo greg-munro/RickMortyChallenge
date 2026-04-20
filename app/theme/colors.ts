@@ -10,9 +10,9 @@ const palette = {
   secondary: "#FFD93D", // Vivid Yellow — secondary action, section highlights
   muted: "#C4B5FD", // Soft Violet — tertiary, subtle backgrounds
 
-  statusAlive: "#4ade80", // vivid green
-  statusDead: "#FF6B6B", // reuse accent red
-  statusUnknown: "#C4B5FD", // reuse muted violet
+  statusAlive: "#55CC44",
+  statusDead: "#D63D2E",
+  statusUnknown: "#9E9E9E",
 
   neutral100: "#FFFFFF",
   neutral200: "#FFFDF5",

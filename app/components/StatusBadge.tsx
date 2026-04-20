@@ -32,7 +32,7 @@ const $container: ThemedStyle<ViewStyle> = ({ colors, spacing }) => ({
   borderWidth: 2,
   borderColor: colors.border,
   paddingHorizontal: spacing.xs,
-  paddingVertical: 2,
+  paddingVertical: spacing.xxxs,
   alignSelf: "flex-start",
 })
 
